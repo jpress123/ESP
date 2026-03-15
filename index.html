@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Atomic Salon — Elia's Learning Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --mint:#a8e6cf;--mint-light:#d4f5e6;--mint-pale:#e8f8f0;
+  --pink:#f4a7bb;--pink-light:#fce4ec;--pink-hot:#e91e78;
+  --cream:#f5f0e1;--cream-dark:#e8e0cc;
+  --charcoal:#2d2d2d;--brown:#4a3728;
+  --gold:#c8a96e;
+}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--cream);color:var(--charcoal);
+  min-height:100vh;overflow-x:hidden;
+}
+
+/* ── CHECKERBOARD BORDER ── */
+.checker-border{
+  background:repeating-conic-gradient(var(--pink) 0% 25%,var(--mint) 0% 50%) 0 0/40px 40px;
+  padding:14px;
+}
+@media(max-width:600px){.checker-border{padding:8px;background-size:28px 28px}}
+
+/* ── HERO ── */
+.hero{
+  background:var(--cream);
+  text-align:center;
+  padding:50px 20px 40px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.hero-title{
+  font-family:'Pacifico',cursive;
+  font-size:clamp(36px,8vw,72px);
+  color:var(--charcoal);
+  line-height:1.1;
+  margin-bottom:8px;
+  text-shadow:2px 2px 0 var(--pink),4px 4px 0 rgba(0,0,0,.06);
+  position:relative;
+}
+.hero-sub{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(16px,3.5vw,28px);
+  font-weight:700;
+  color:var(--brown);
+  margin-bottom:6px;
+  position:relative;
+}
+.hero-name{
+  font-family:'DM Sans',sans-serif;
+  font-size:clamp(14px,2.5vw,18px);
+  color:var(--pink-hot);
+  font-weight:600;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  position:relative;
+}
+
+/* ── SPARKLES (CSS atomic starbursts) ── */
+.sparkle{position:absolute;pointer-events:none}
+.sparkle::before,.sparkle::after{
+  content:'';position:absolute;background:var(--pink);
+}
+.sparkle::before{width:2px;height:20px;left:50%;top:50%;transform:translate(-50%,-50%)}
+.sparkle::after{width:20px;height:2px;left:50%;top:50%;transform:translate(-50%,-50%)}
+.sparkle.mint::before,.sparkle.mint::after{background:var(--mint)}
+.sparkle.sm::before{height:12px}.sparkle.sm::after{width:12px}
+.sparkle.lg::before{height:28px}.sparkle.lg::after{width:28px}
+
+/* ── ATOM ICON (pure CSS) ── */
+.atom{
+  width:60px;height:60px;margin:20px auto 10px;position:relative;
+}
+.atom .nucleus{
+  width:14px;height:14px;background:var(--pink-hot);border-radius:50%;
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  box-shadow:0 0 10px var(--pink);
+}
+.atom .orbit{
+  position:absolute;width:100%;height:100%;
+  border:2px solid var(--mint);border-radius:50%;
+  top:0;left:0;
+}
+.atom .orbit:nth-child(2){transform:rotate(60deg)}
+.atom .orbit:nth-child(3){transform:rotate(-60deg)}
+
+/* ── DIVIDER ── */
+.retro-divider{
+  display:flex;align-items:center;gap:12px;
+  max-width:500px;margin:0 auto 30px;padding:0 20px;
+}
+.retro-divider .line{flex:1;height:2px;background:var(--pink)}
+.retro-divider .diamond{
+  width:10px;height:10px;background:var(--pink-hot);
+  transform:rotate(45deg);flex-shrink:0;
+}
+
+/* ── SUBJECTS SECTION ── */
+.subjects{
+  padding:10px 16px 50px;
+  max-width:900px;margin:0 auto;
+}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(20px,4vw,32px);
+  font-weight:900;
+  color:var(--charcoal);
+  text-align:center;
+  margin-bottom:6px;
+}
+.section-sub{
+  text-align:center;font-size:15px;color:var(--brown);
+  margin-bottom:24px;opacity:.7;
+}
+
+/* ── SUBJECT CARDS ── */
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:20px;
+}
+.subject-card{
+  background:var(--cream);
+  border-radius:16px;
+  overflow:hidden;
+  border:3px solid var(--cream-dark);
+  transition:all .3s;
+  cursor:pointer;
+  position:relative;
+  text-decoration:none;color:inherit;
+  display:block;
+}
+.subject-card:hover,.subject-card:active{
+  transform:translateY(-4px);
+  border-color:var(--pink);
+  box-shadow:0 8px 30px rgba(233,30,120,.15);
+}
+.card-banner{
+  height:100px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.card-banner.french{background:linear-gradient(135deg,var(--pink-light),var(--mint-pale))}
+.card-banner.physics{background:linear-gradient(135deg,var(--mint-light),var(--cream))}
+.card-banner.maths{background:linear-gradient(135deg,#fef3c7,var(--pink-light))}
+.card-banner.english{background:linear-gradient(135deg,var(--mint-pale),#e0e7ff)}
+.card-banner.coming{background:repeating-conic-gradient(var(--cream-dark) 0% 25%,var(--cream) 0% 50%) 0 0/20px 20px}
+.card-emoji{font-size:48px;position:relative;z-index:1}
+.card-body{padding:16px}
+.card-subject{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:900;
+  color:var(--charcoal);margin-bottom:2px;
+}
+.card-lesson{font-size:14px;color:var(--brown);margin-bottom:8px;font-weight:500}
+.card-desc{font-size:13px;color:#6b7280;line-height:1.5;margin-bottom:12px}
+.card-tag{
+  display:inline-block;
+  padding:4px 12px;border-radius:20px;
+  font-size:11px;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.tag-live{background:var(--mint-light);color:#065f46}
+.tag-soon{background:var(--pink-light);color:var(--pink-hot)}
+.card-starburst{
+  position:absolute;top:10px;right:10px;
+  width:40px;height:40px;
+  background:var(--pink-hot);color:#fff;
+  font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  text-transform:uppercase;letter-spacing:.5px;
+  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+}
+
+/* ── FOOTER ── */
+.footer{
+  text-align:center;padding:30px 16px;
+  font-size:13px;color:var(--brown);opacity:.5;
+}
+
+/* ── COMING SOON OVERLAY ── */
+.card-overlay{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:rgba(245,240,225,.7);
+  display:flex;align-items:center;justify-content:center;
+  border-radius:13px;
+}
+.card-overlay span{
+  font-family:'Playfair Display',serif;
+  font-size:16px;font-weight:700;color:var(--brown);
+  padding:6px 16px;background:var(--cream);
+  border:2px dashed var(--pink);border-radius:10px;
+}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .hero{padding:30px 16px 28px}
+  .card-grid{grid-template-columns:1fr}
+  .card-banner{height:80px}
+  .card-emoji{font-size:38px}
+}
+</style>
+</head>
+<body>
+
+<!-- CHECKERBOARD TOP BORDER -->
+<div class="checker-border">
+
+<!-- HERO -->
+<div class="hero">
+  <!-- Sparkle decorations -->
+  <div class="sparkle sm" style="top:15%;left:8%"></div>
+  <div class="sparkle mint" style="top:25%;right:12%"></div>
+  <div class="sparkle lg" style="bottom:20%;left:15%"></div>
+  <div class="sparkle sm mint" style="bottom:30%;right:8%"></div>
+  <div class="sparkle" style="top:10%;right:30%"></div>
+  <div class="sparkle mint sm" style="top:40%;left:25%"></div>
+
+  <!-- Atom icon -->
+  <div class="atom">
+    <div class="orbit"></div>
+    <div class="orbit"></div>
+    <div class="orbit"></div>
+    <div class="nucleus"></div>
+  </div>
+
+  <h1 class="hero-title">The Atomic Salon</h1>
+  <p class="hero-sub">Elia's Learning Hub</p>
+  <p class="hero-name">Where school meets style</p>
+
+  <div style="margin-top:20px">
+    <div class="retro-divider">
+      <div class="line"></div>
+      <div class="diamond"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end checker border -->
+
+<!-- SUBJECTS -->
+<div class="subjects">
+  <h2 class="section-title">Pick Your Station</h2>
+  <p class="section-sub">Each card opens an interactive lesson. More coming soon!</p>
+
+  <div class="card-grid">
+
+    <!-- FRENCH (LIVE) -->
+    <a class="subject-card" href="french-lecon4.html">
+      <div class="card-banner french">
+        <div class="card-starburst">New!</div>
+        <span class="card-emoji">🇫🇷</span>
+      </div>
+      <div class="card-body">
+        <div class="card-subject">French</div>
+        <div class="card-lesson">Leçon 4 — Le Cours intensif 1</div>
+        <div class="card-desc">Articles with "de," -ir verbs, stressed pronouns, préférer, questions with est-ce que, futur composé, faire + activities, and aimer/détester.</div>
+        <span class="card-tag tag-live">Ready to Go</span>
+      </div>
+    </a>
+
+    <!-- PHYSICS (COMING SOON) -->
+    <div class="subject-card" style="cursor:default">
+      <div class="card-banner physics">
+        <span class="card-emoji">⚡</span>
+      </div>
+      <div class="card-body">
+        <div class="card-subject">Physics</div>
+        <div class="card-lesson">Energy Stores, Transfers & Calculations</div>
+        <div class="card-desc">The Atomic Age Beauty Guide — kinetic, thermal, chemical energy and more, salon style.</div>
+        <span class="card-tag tag-soon">Coming Soon</span>
+      </div>
+      <div class="card-overlay"><span>Coming Soon</span></div>
+    </div>
+
+    <!-- MATHS (COMING SOON) -->
+    <div class="subject-card" style="cursor:default">
+      <div class="card-banner maths">
+        <span class="card-emoji">🧮</span>
+      </div>
+      <div class="card-body">
+        <div class="card-subject">Maths</div>
+        <div class="card-lesson">Next module</div>
+        <div class="card-desc">Interactive practice exercises and quizzes for upcoming maths topics.</div>
+        <span class="card-tag tag-soon">Coming Soon</span>
+      </div>
+      <div class="card-overlay"><span>Coming Soon</span></div>
+    </div>
+
+    <!-- ENGLISH (COMING SOON) -->
+    <div class="subject-card" style="cursor:default">
+      <div class="card-banner english">
+        <span class="card-emoji">📖</span>
+      </div>
+      <div class="card-body">
+        <div class="card-subject">English</div>
+        <div class="card-lesson">Next module</div>
+        <div class="card-desc">Grammar, vocabulary, and reading comprehension exercises.</div>
+        <span class="card-tag tag-soon">Coming Soon</span>
+      </div>
+      <div class="card-overlay"><span>Coming Soon</span></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  The Atomic Salon &mdash; Made with love for Elia
+</div>
+
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Leçon 4 — French Interactive Practice</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--p50:#fdf2f8;--p100:#fce7f3;--p200:#fbcfe8;--p300:#f9a8d4;--p400:#f472b6;--p500:#ec4899;--p600:#db2777;--p700:#be185d;--p800:#9d174d;--p900:#831843}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,var(--p50),var(--p100));min-height:100vh;color:#1f2937;line-height:1.5}
+nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:12px 8px;background:#fff;border-bottom:3px solid var(--p300);position:sticky;top:0;z-index:10}
+nav button{padding:7px 13px;border-radius:20px;border:none;cursor:pointer;font-size:13px;font-weight:500;background:var(--p100);color:var(--p700);transition:all .2s;white-space:nowrap}
+nav button.active{font-weight:700;background:var(--p500);color:#fff}
+.wrap{padding:8px 12px 60px;max-width:720px;margin:0 auto}
+.card{background:#fff;border-radius:16px;padding:20px;margin:14px 0;box-shadow:0 4px 20px var(--p200)}
+h1.title{font-size:26px;font-weight:800;color:var(--p700);text-align:center;margin:6px 0 2px}
+p.sub{font-size:15px;color:var(--p400);text-align:center;margin-bottom:16px}
+.btn{padding:10px 22px;border-radius:12px;border:none;cursor:pointer;font-size:15px;font-weight:600;background:var(--p500);color:#fff;transition:all .2s}
+.btn:active{transform:scale(.97)}
+.btn.sec{background:var(--p100);color:var(--p700)}
+.progress{height:8px;border-radius:4px;background:var(--p100);overflow:hidden;margin:10px 0}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--p400),var(--p600));transition:width .5s}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;background:var(--p100);color:var(--p700);font-size:12px;font-weight:600}
+.option-btn{padding:12px 16px;border-radius:12px;border:2px solid var(--p300);cursor:pointer;font-size:15px;background:#fff;color:var(--p800);width:100%;text-align:left;transition:all .2s;font-weight:500;display:block;margin-bottom:8px}
+.option-btn:active{transform:scale(.98)}
+.option-btn.correct{border-color:#10b981;background:#d1fae5;color:#065f46}
+.option-btn.wrong{border-color:#ef4444;background:#fee2e2;color:#991b1b}
+.explain{margin-top:12px;padding:12px;border-radius:10px;background:var(--p50);font-size:14px;color:var(--p800);line-height:1.5}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+th{padding:10px;background:var(--p500);color:#fff;font-weight:600}
+td{padding:10px;border-bottom:1px solid var(--p100);text-align:center}
+tr:nth-child(even) td{background:var(--p50)}
+.conj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-top:10px}
+.conj-item{padding:8px 10px;border-radius:8px;font-size:14px;text-align:center}
+.conj-item.alt{background:var(--p100)}
+.conj-item:not(.alt){background:var(--p50)}
+.conj-item .subj{color:var(--p400)}
+.conj-item .form{color:var(--p700);font-weight:700}
+.tip{background:var(--p50);padding:12px;border-radius:10px;font-size:14px;color:var(--p800);line-height:1.6;margin:10px 0}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.home-card{padding:14px;border-radius:14px;border:2px solid var(--p200);background:#fff;cursor:pointer;text-align:left;transition:all .2s}
+.home-card:active{transform:scale(.97);border-color:var(--p400)}
+.home-card .icon{font-size:26px}
+.home-card .label{font-weight:700;color:var(--p700);font-size:13px;margin-top:4px}
+.home-card .desc{font-size:11px;color:var(--p400);margin-top:2px}
+.fill-item{padding:12px;border-radius:12px;border:2px solid var(--p200);background:#fff;margin-bottom:10px}
+.fill-item.correct{border-color:#10b981;background:#f0fdf4}
+.fill-item.wrong{border-color:#ef4444;background:#fef2f2}
+.fill-item p{margin:0 0 8px;font-size:15px;font-weight:500}
+.fill-item input{padding:10px 12px;border-radius:10px;border:2px solid var(--p300);font-size:15px;width:100%;outline:none}
+.fill-item.correct input{border-color:#10b981}
+.fill-item.wrong input{border-color:#ef4444}
+.fill-item .answer{margin:6px 0 0;font-size:13px;color:#dc2626}
+.expr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:10px}
+.expr-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--p50);font-size:14px}
+.expr-item .emoji{font-size:22px}
+.like-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:var(--p50);margin-bottom:8px;flex-wrap:wrap}
+.like-row .emoji{font-size:26px}
+.like-row .name{flex:1;font-weight:600;font-size:14px;min-width:80px}
+.like-btns{display:flex;gap:4px}
+.like-btn{padding:6px 10px;border-radius:8px;border:2px solid var(--p200);background:#fff;cursor:pointer;font-size:12px;font-weight:600;color:var(--p400);transition:all .15s}
+.like-btn:active{transform:scale(.93)}
+.like-btn.sel{border-color:var(--color);background:color-mix(in srgb,var(--color) 15%,#fff);color:var(--color)}
+.sentences{margin-top:16px;padding:14px;border-radius:12px;background:#fff;border:2px solid var(--p300)}
+.sentences h3{font-size:15px;color:var(--p600);margin:0 0 8px}
+.sentences p{font-size:14px;margin:4px 0;color:var(--p800)}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px}
+.quiz-header h2{font-size:17px;font-weight:700;color:var(--p700);margin:0}
+.quiz-badges{display:flex;gap:6px}
+.q-num{font-size:13px;color:#9ca3af;margin-bottom:10px}
+.q-prompt{font-size:16px;font-weight:600;margin-bottom:14px;line-height:1.5}
+.result-center{text-align:center}
+.result-center .big-emoji{font-size:56px}
+.result-center .score{font-size:30px;font-weight:800;color:var(--p600)}
+.btns-row{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;align-items:center}
+.formula{display:inline-block;background:var(--p200);padding:4px 10px;border-radius:8px;margin:4px 0;font-weight:700;font-size:14px}
+.hidden{display:none}
+@media(max-width:480px){
+  nav{gap:4px;padding:8px 4px}
+  nav button{padding:6px 10px;font-size:11px}
+  .card{padding:16px;margin:10px 0}
+  h1.title{font-size:22px}
+  .home-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .home-card{padding:10px}
+  .home-card .icon{font-size:22px}
+  .home-card .label{font-size:11px}
+  .home-card .desc{font-size:10px}
+  .conj-grid{grid-template-columns:repeat(2,1fr)}
+  .expr-grid{grid-template-columns:1fr}
+  .q-prompt{font-size:15px}
+  .option-btn{font-size:14px;padding:11px 14px}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav"></nav>
+<div class="wrap" id="app"></div>
+
+<script>
+const sections=[
+  {id:"home",label:"🏠 Home"},{id:"articles",label:"📝 Articles"},{id:"ir-verbs",label:"🏃 -ir Verbs"},
+  {id:"pronouns",label:"👤 Pronouns"},{id:"preferer",label:"⭐ Préférer"},{id:"questions",label:"❓ Questions"},
+  {id:"futur",label:"🚀 Futur"},{id:"faire",label:"🎯 Faire"},{id:"likes",label:"💗 Likes"},{id:"quiz",label:"🏆 Quiz"}
+];
+
+let currentPage="home";
+
+function nav(page){currentPage=page;render()}
+
+function render(){
+  const navEl=document.getElementById("nav");
+  navEl.innerHTML=sections.map(s=>`<button class="${s.id===currentPage?"active":""}" onclick="nav('${s.id}')">${s.label}</button>`).join("");
+  const app=document.getElementById("app");
+  switch(currentPage){
+    case"home":app.innerHTML=renderHome();break;
+    case"articles":app.innerHTML=renderArticles();break;
+    case"ir-verbs":app.innerHTML=renderIrVerbs();break;
+    case"pronouns":app.innerHTML=renderPronouns();break;
+    case"preferer":app.innerHTML=renderPreferer();break;
+    case"questions":app.innerHTML=renderQuestions();break;
+    case"futur":app.innerHTML=renderFutur();break;
+    case"faire":app.innerHTML=renderFaire();break;
+    case"likes":app.innerHTML=renderLikes();initLikes();break;
+    case"quiz":app.innerHTML=renderGrandQuiz();break;
+  }
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ── HOME ── */
+function renderHome(){
+  const items=[
+    {id:"articles",icon:"📝",label:"de + Article",desc:"du, de la, de l', des"},
+    {id:"ir-verbs",icon:"🏃",label:"Verbes en -ir",desc:"sortir, dormir, partir"},
+    {id:"pronouns",icon:"👤",label:"Pronoms disjoints",desc:"moi, toi, lui, elle..."},
+    {id:"preferer",icon:"⭐",label:"Préférer",desc:"Accent changes"},
+    {id:"questions",icon:"❓",label:"Poser des questions",desc:"est-ce que / qu'"},
+    {id:"futur",icon:"🚀",label:"Futur composé",desc:"aller + infinitif"},
+    {id:"faire",icon:"🎯",label:"Faire + activités",desc:"Conjugation & expressions"},
+    {id:"likes",icon:"💗",label:"Aimer / Détester",desc:"Express your tastes"},
+    {id:"quiz",icon:"🏆",label:"Grand Quiz",desc:"Test everything!"}
+  ];
+  return`<div class="card">
+    <div style="font-size:40px;text-align:center">🇫🇷</div>
+    <h1 class="title">Leçon 4</h1>
+    <p class="sub">Le Cours intensif 1 — Interactive Practice</p>
+    <div class="home-grid">${items.map(i=>`<div class="home-card" onclick="nav('${i.id}')">
+      <div class="icon">${i.icon}</div><div class="label">${i.label}</div><div class="desc">${i.desc}</div>
+    </div>`).join("")}</div>
+  </div>`;
+}
+
+/* ── QUIZ ENGINE ── */
+const quizStates={};
+function initQuiz(id,questions){
+  if(!quizStates[id])quizStates[id]={idx:0,selected:null,score:0,done:false,streak:0,questions};
+  return quizStates[id];
+}
+function resetQuiz(id){delete quizStates[id];render()}
+
+function selectAnswer(id,i){
+  const s=quizStates[id];if(s.selected!==null||s.done)return;
+  s.selected=i;
+  const q=s.questions[s.idx];
+  if(i===q.correct){s.score++;s.streak++}else s.streak=0;
+  renderQuizUI(id);
+  setTimeout(()=>{
+    if(s.idx+1<s.questions.length){s.idx++;s.selected=null}else s.done=true;
+    renderQuizUI(id);
+  },1200);
+}
+
+function renderQuizUI(id){
+  const el=document.getElementById("quiz-"+id);if(!el)return;
+  const s=quizStates[id],qs=s.questions;
+  if(s.done){
+    const pct=Math.round(s.score/qs.length*100);
+    const emoji=pct>=90?"🌟":pct>=70?"👏":pct>=50?"💪":"📚";
+    el.innerHTML=`<div class="card"><div class="result-center">
+      <div class="big-emoji">${emoji}</div>
+      <h2 class="title" style="font-size:20px">${pct>=70?"Bravo !":"Continue à pratiquer !"}</h2>
+      <p class="score">${s.score} / ${qs.length}</p>
+      <div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="btns-row"><button class="btn sec" onclick="resetQuiz('${id}')">Retry</button></div>
+    </div></div>`;
+    return;
+  }
+  const q=qs[s.idx],pct=(s.idx+(s.done?1:0))/qs.length*100;
+  let opts=q.options.map((o,i)=>{
+    let cls="option-btn";
+    if(s.selected!==null){if(i===q.correct)cls+=" correct";else if(i===s.selected)cls+=" wrong"}
+    return`<button class="${cls}" onclick="selectAnswer('${id}',${i})">${o}</button>`;
+  }).join("");
+  let explainHtml=s.selected!==null&&q.explanation?`<div class="explain">💡 ${q.explanation}</div>`:"";
+  el.innerHTML=`<div class="card">
+    <div class="quiz-header"><h2>${s.title||"Practice"}</h2>
+    <div class="quiz-badges">${s.streak>=3?`<span class="badge">🔥 ${s.streak}</span>`:""}<span class="badge">⭐ ${s.score}/${qs.length}</span></div></div>
+    <div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <p class="q-num">Question ${s.idx+1} of ${qs.length}</p>
+    <p class="q-prompt">${q.prompt}</p>
+    ${opts}${explainHtml}
+  </div>`;
+}
+
+function quizBlock(id,title,questions){
+  const s=initQuiz(id,questions);s.title=title;
+  setTimeout(()=>renderQuizUI(id),0);
+  return`<div id="quiz-${id}"></div>`;
+}
+
+/* ── CONJUGATION GRID ── */
+function conjGrid(pairs){
+  return`<div class="conj-grid">${pairs.map(([s,f],i)=>`<div class="conj-item ${i%2?"":"alt"}"><span class="subj">${s} </span><span class="form">${f}</span></div>`).join("")}</div>`;
+}
+
+/* ── ARTICLES ── */
+function renderArticles(){
+  const qs=[
+    {prompt:"Je viens ___ cinéma. (de + le)",options:["du","de la","de l'","des"],correct:0,explanation:"de + le = du"},
+    {prompt:"Elle parle ___ musique. (de + la)",options:["du","de la","de l'","des"],correct:1,explanation:"de + la stays as de la"},
+    {prompt:"Il revient ___ école. (de + l')",options:["du","de la","de l'","des"],correct:2,explanation:"Before a vowel: de l'"},
+    {prompt:"Nous parlons ___ amis. (de + les)",options:["du","de la","de l'","des"],correct:3,explanation:"de + les = des"},
+    {prompt:"C'est le livre ___ professeur.",options:["du","de la","de l'","des"],correct:0,explanation:"professeur is masculine → de + le = du"},
+    {prompt:"La porte ___ appartement est ouverte.",options:["du","de la","de l'","des"],correct:2,explanation:"appartement starts with a vowel → de l'"},
+    {prompt:"Les photos ___ vacances sont belles.",options:["du","de la","de l'","des"],correct:3,explanation:"vacances is plural → de + les = des"},
+    {prompt:"Le quartier ___ ville est joli.",options:["du","de la","de l'","des"],correct:1,explanation:"ville is feminine → de la"}
+  ];
+  return`<div class="card">
+    <h1 class="title" style="font-size:22px">📝 de + Article défini</h1>
+    <p class="sub">The preposition "de" contracts with the definite article</p>
+    <table><thead><tr><th></th><th>Masculin</th><th>Féminin</th></tr></thead>
+    <tbody><tr><td><strong>Singulier</strong></td><td><strong>du</strong> <small style="color:var(--p400)">(de l' + voyelle)</small></td><td><strong>de la</strong> <small style="color:var(--p400)">(de l' + voyelle)</small></td></tr>
+    <tr><td><strong>Pluriel</strong></td><td colspan="2"><strong>des</strong></td></tr></tbody></table>
+  </div>${quizBlock("articles","Practice: de + article",qs)}`;
+}
+
+/* ── IR VERBS ── */
+function renderIrVerbs(){
+  const verbs={sortir:["sors","sors","sort","sortons","sortez","sortent"],dormir:["dors","dors","dort","dormons","dormez","dorment"],partir:["pars","pars","part","partons","partez","partent"]};
+  const subj=["je","tu","il/elle/on","nous","vous","ils/elles"];
+  const qs=[
+    {prompt:"Je ___ à huit heures. (sortir)",options:["sors","sort","sortons","sortez"],correct:0,explanation:"je sors — singular forms use shorter stem"},
+    {prompt:"Nous ___ bien. (dormir)",options:["dors","dort","dormons","dorment"],correct:2,explanation:"nous dormons — plural keeps full stem"},
+    {prompt:"Elles ___ demain. (partir)",options:["pars","part","partons","partent"],correct:3,explanation:"elles partent"},
+    {prompt:"Tu ___ à quelle heure ? (partir)",options:["part","pars","partons","partez"],correct:1,explanation:"tu pars"},
+    {prompt:"Vous ___ de la classe. (sortir)",options:["sors","sort","sortons","sortez"],correct:3,explanation:"vous sortez"},
+    {prompt:"Elle ___ toute la nuit. (dormir)",options:["dors","dort","dormons","dorment"],correct:1,explanation:"elle dort"}
+  ];
+  let verbTables=Object.entries(verbs).map(([v,forms])=>`<h3 style="font-size:15px;color:var(--p600);margin:14px 0 6px">${v}</h3>${conjGrid(subj.map((s,i)=>[s,forms[i]]))}`).join("");
+  return`<div class="card">
+    <h1 class="title" style="font-size:22px">🏃 Verbes en -ir</h1>
+    <p class="sub">sortir, dormir, partir — two stems!</p>
+    <div class="tip">These verbs have <strong>two stems</strong>: a shorter one for singular (je, tu, il) and the full stem for plural (nous, vous, ils).</div>
+    ${verbTables}
+  </div>${quizBlock("ir","Practice: -ir verbs",qs)}`;
+}
+
+/* ── PRONOUNS ── */
+function renderPronouns(){
+  const qs=[
+    {prompt:"Qui est là ? — ___ ! (I)",options:["Je","Moi","Me","Mon"],correct:1,explanation:"Stressed pronouns can stand alone: Moi !"},
+    {prompt:"Je pars avec ___. (him)",options:["il","lui","le","son"],correct:1,explanation:"After a preposition: avec lui"},
+    {prompt:"Et ___, tu viens ? (you)",options:["tu","te","toi","ton"],correct:2,explanation:"Stressed pronoun for emphasis: Et toi, tu viens ?"},
+    {prompt:"C'est pour ___. (us)",options:["on","nos","nous","notre"],correct:2,explanation:"After a preposition: pour nous"},
+    {prompt:"Je suis chez ___. (them, feminine)",options:["ils","eux","elles","les"],correct:2,explanation:"Feminine plural stressed pronoun: elles"},
+    {prompt:"___, je préfère le chocolat. (Me, emphasis)",options:["Je","Me","Moi","Mon"],correct:2,explanation:"For emphasis: Moi, je préfère..."}
+  ];
+  return`<div class="card">
+    <h1 class="title" style="font-size:22px">👤 Pronoms personnels disjoints</h1>
+    <p class="sub">Stressed / disjunctive pronouns</p>
+    <table><thead><tr><th>Person</th><th>Masculin</th><th>Féminin</th></tr></thead>
+    <tbody>
+    <tr><td>1e sg</td><td colspan="2"><strong>moi</strong></td></tr>
+    <tr><td>2e sg</td><td colspan="2"><strong>toi</strong></td></tr>
+    <tr><td>3e sg</td><td><strong>lui</strong></td><td><strong>elle</strong></td></tr>
+    <tr><td>1e pl</td><td colspan="2"><strong>nous</strong></td></tr>
+    <tr><td>2e pl</td><td colspan="2"><strong>vous</strong></td></tr>
+    <tr><td>3e pl</td><td><strong>eux</strong></td><td><strong>elles</strong></td></tr>
+    </tbody></table>
+    <div class="tip"><strong>When to use:</strong> alone ("Qui ? — Moi."), after prepositions ("avec lui"), and for emphasis ("Moi, j'adore le chocolat").</div>
+  </div>${quizBlock("pronouns","Practice: Stressed Pronouns",qs)}`;
+}
+
+/* ── PRÉFÉRER ── */
+let prefererAnswers=["","","","","",""];
+let prefererChecked=false;
+const prefererQs=[
+  {prompt:"Je ___ le chocolat. (préférer)",answer:"préfère"},
+  {prompt:"Tu ___ la musique ? (préférer)",answer:"préfères"},
+  {prompt:"Il ___ sortir. (préférer)",answer:"préfère"},
+  {prompt:"Nous ___ le cinéma. (préférer)",answer:"préférons"},
+  {prompt:"Vous ___ Paris ? (préférer)",answer:"préférez"},
+  {prompt:"Elles ___ danser. (préférer)",answer:"préfèrent"}
+];
+
+function renderPreferer(){
+  const pairs=[["je","préfère"],["tu","préfères"],["il/elle/on","préfère"],["nous","préférons"],["vous","préférez"],["ils/elles","préfèrent"]];
+  let fillHtml=prefererQs.map((q,i)=>{
+    const val=prefererAnswers[i]||"";
+    const correct=prefererChecked&&val.trim().toLowerCase()===q.answer.toLowerCase();
+    const wrong=prefererChecked&&!correct;
+    return`<div class="fill-item${correct?" correct":""}${wrong?" wrong":""}">
+      <p>${q.prompt}</p>
+      <input value="${val}" oninput="prefererInput(${i},this.value)" placeholder="Type your answer...">
+      ${wrong?`<p class="answer">Correct: <strong>${q.answer}</strong></p>`:""}
+    </div>`;
+  }).join("");
+  const score=prefererChecked?prefererQs.reduce((a,q,i)=>a+(prefererAnswers[i].trim().toLowerCase()===q.answer.toLowerCase()?1:0),0):0;
+  return`<div class="card">
+    <h1 class="title" style="font-size:22px">⭐ Le verbe « préférer »</h1>
+    <p class="sub">Watch the accent change!</p>
+    ${conjGrid(pairs)}
+    <div class="tip"><strong>Rule:</strong> The accent changes to <strong>è</strong> (grave) before silent endings (-e, -es, -ent). It stays <strong>é</strong> (acute) before pronounced endings (-ons, -ez).</div>
+  </div>
+  <div class="card">
+    <h1 class="title" style="font-size:20px">Type the correct form</h1>
+    <p class="sub">Pay attention to the accents!</p>
+    ${fillHtml}
+    <div class="btns-row">
+      <button class="btn" onclick="checkPreferer()">Check Answers</button>
+      ${prefererChecked?`<span class="badge" style="font-size:15px">⭐ ${score}/${prefererQs.length}</span>`:""}
+      <button class="btn sec" onclick="resetPreferer()">Reset</button>
+    </div>
+  </div>`;
+}
+function prefererInput(i,v){prefererAnswers[i]=v;prefererChecked=false}
+function checkPreferer(){prefererChecked=true;render()}
+function resetPreferer(){prefererAnswers=["","","","","",""];prefererChecked=false;render()}
+
+/* ── QUESTIONS ── */
+function renderQuestions(){
+  const qs=[
+    {prompt:'Rearrange: Où / tu / habites / est-ce que → ?',options:["Où est-ce que tu habites ?","Est-ce que où tu habites ?","Tu habites est-ce que où ?","Où tu est-ce que habites ?"],correct:0,explanation:"Pattern: Question word + est-ce que + subject + verb"},
+    {prompt:'How do you say: "What do you do?"',options:["Qu'est-ce que tu fais ?","Est-ce que tu fais quoi ?","Tu fais est-ce que quoi ?","Quoi est-ce que tu fais ?"],correct:0,explanation:"Que + est-ce que = Qu'est-ce que"},
+    {prompt:"Quand ___ vous arrivez ?",options:["est-ce que","est-ce qui","qu'est-ce","est-que"],correct:0,explanation:"Quand + est-ce que + subject + verb"},
+    {prompt:"Comment ___ elle s'appelle ?",options:["est-ce que","est-ce qui","que","qui"],correct:0,explanation:"Comment est-ce qu'elle s'appelle ?"},
+    {prompt:"Which is correct?",options:["Pourquoi est-ce que tu pars ?","Pourquoi tu est-ce que pars ?","Est-ce que pourquoi tu pars ?","Tu pars est-ce que pourquoi ?"],correct:0,explanation:"Question word always comes first, then est-ce que"}
+  ];
+  return`<div class="card">
+    <h1 class="title" style="font-size:22px">❓ Poser des questions</h1>
+    <p class="sub">Using est-ce que / qu'</p>
+    <div class="tip"><strong>Formula:</strong><br><span class="formula">Mot interrogatif + est-ce que/qu' + sujet + verbe + complément ?</span></div>
+  </div>${quizBlock("questions","Practice: Questions",qs)}`;
+}
+
+/* ── FUTUR ── */
+function renderFutur(){
+  const pairs=[["je","vais"],["tu","vas"],["il/elle/on","va"],["nous","allons"],["vous","allez"],["ils/elles","vont"]];
+  const qs=[
+    {prompt:"Je ___ manger. (I am going to eat)",options:["vais","vas","va","allons"],correct:0,explanation:"je vais + infinitif"},
+    {prompt:"Tu ___ partir demain.",options:["vais","vas","va","allons"],correct:1,explanation:"tu vas + infinitif"},
+    {prompt:"Nous ___ faire une fête.",options:["vais","vas","va","allons"],correct:3,explanation:"nous allons + infinitif"},
+    {prompt:"Ils ___ jouer au foot.",options:["va","allons","allez","vont"],correct:3,explanation:"ils vont + infinitif"},
+    {prompt:"Elle ___ dormir.",options:["vais","vas","va","vont"],correct:2,explanation:"elle va + infinitif"},
+    {prompt:"Vous ___ sortir ce soir.",options:["allons","allez","vont","vas"],correct:1,explanation:"vous allez + infinitif"},
+    {prompt:'"We are going to watch a film" →',options:["Nous allons regarder un film.","Nous regardons aller un film.","Nous allons un film regarder.","Nous va regarder un film."],correct:0,explanation:"aller conjugated + infinitive of main verb"}
+  ];
+  return`<div class="card">
+    <h1 class="title" style="font-size:22px">🚀 Le futur composé</h1>
+    <p class="sub">aller (present) + infinitive = near future</p>
+    <div class="conj-grid">${pairs.map(([s,f],i)=>`<div class="conj-item ${i%2?"":"alt"}"><span class="subj">${s} </span><span class="form">${f}</span><span style="color:var(--p400)"> + inf.</span></div>`).join("")}</div>
+  </div>${quizBlock("futur","Practice: Futur composé",qs)}`;
+}
+
+/* ── FAIRE ── */
+function renderFaire(){
+  const subj=["je","tu","il","elle","on","nous","vous","ils","elles"];
+  const forms=["fais","fais","fait","fait","fait","faisons","faites","font","font"];
+  const exprs=[
+    {e:"🎵",l:"de la musique"},{e:"🍫",l:"une tarte au chocolat"},{e:"🥐",l:"un numéro"},{e:"🏓",l:"une partie de ping-pong"},
+    {e:"🥗",l:"une salade"},{e:"🎬",l:"un film sur le quartier"},{e:"😂",l:"des blagues"},{e:"📸",l:"des photos dans le quartier"}
+  ];
+  const qs=[
+    {prompt:"Je ___ une tarte. (faire)",options:["fais","fait","faisons","faites"],correct:0},
+    {prompt:"Nous ___ de la musique. (faire)",options:["fais","fait","faisons","font"],correct:2},
+    {prompt:"Ils ___ des blagues. (faire)",options:["fais","fait","faisons","font"],correct:3},
+    {prompt:"Tu ___ une salade. (faire)",options:["fais","fait","faisons","faites"],correct:0},
+    {prompt:"Vous ___ des photos. (faire)",options:["fais","fait","faisons","faites"],correct:3},
+    {prompt:"Elle ___ un film. (faire)",options:["fais","fait","faisons","font"],correct:1}
+  ];
+  return`<div class="card">
+    <h1 class="title" style="font-size:22px">🎯 Le verbe « faire »</h1>
+    <p class="sub">Conjugation + activities</p>
+    ${conjGrid(subj.map((s,i)=>[s,forms[i]]))}
+    <h3 style="font-size:15px;color:var(--p600);margin:16px 0 8px">Expressions with faire:</h3>
+    <div class="expr-grid">${exprs.map(x=>`<div class="expr-item"><span class="emoji">${x.e}</span><span><strong>faire</strong> ${x.l}</span></div>`).join("")}</div>
+  </div>${quizBlock("faire","Practice: faire",qs)}`;
+}
+
+/* ── LIKES ── */
+let likeRatings={};
+function renderLikes(){
+  const items=[
+    {e:"🎵",n:"la musique"},{e:"🍫",n:"le chocolat"},{e:"🥐",n:"les croissants"},{e:"🏓",n:"le ping-pong"},
+    {e:"🥗",n:"la salade"},{e:"🎬",n:"les films"},{e:"😂",n:"les blagues"},{e:"☕",n:"le café"}
+  ];
+  const levels=[{icon:"💗💗",label:"adorer",color:"#ec4899"},{icon:"💗",label:"aimer",color:"#f472b6"},{icon:"❌",label:"détester",color:"#ef4444"}];
+  let legend=levels.map(l=>`<span class="badge" style="background:${l.color}20;color:${l.color}">${l.icon} ${l.label}</span>`).join("");
+  let rows=items.map((item,idx)=>{
+    let btns=levels.map((l,li)=>{
+      const sel=likeRatings[idx]===li;
+      return`<button class="like-btn${sel?" sel":""}" style="--color:${l.color}" onclick="setLike(${idx},${li})">${l.icon}</button>`;
+    }).join("");
+    return`<div class="like-row"><span class="emoji">${item.e}</span><span class="name">${item.n}</span><div class="like-btns">${btns}</div></div>`;
+  }).join("");
+  let sentences="";
+  const keys=Object.keys(likeRatings);
+  if(keys.length>0){
+    const lines=keys.map(idx=>{
+      const item=items[idx],lv=likeRatings[idx];
+      if(lv===0)return`<p>J'adore ${item.n} !</p>`;
+      if(lv===1)return`<p>J'aime ${item.n}.</p>`;
+      return`<p>Je déteste ${item.n}.</p>`;
+    }).join("");
+    sentences=`<div class="sentences"><h3>Your sentences:</h3>${lines}</div>`;
+  }
+  return`<div class="card">
+    <h1 class="title" style="font-size:22px">💗 Aimer / Adorer / Détester</h1>
+    <p class="sub">Click to express your taste for each item!</p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:14px;flex-wrap:wrap">${legend}</div>
+    ${rows}${sentences}
+  </div>`;
+}
+function setLike(idx,level){likeRatings[idx]=level;render()}
+function initLikes(){}
+
+/* ── GRAND QUIZ ── */
+function renderGrandQuiz(){
+  const qs=[
+    {prompt:"Je viens ___ parc.",options:["du","de la","de l'","des"],correct:0,explanation:"parc is masculine: de + le = du"},
+    {prompt:"Elle ___ à 7 heures. (sortir)",options:["sors","sort","sortons","sortent"],correct:1,explanation:"elle sort"},
+    {prompt:"C'est pour ___. (her)",options:["la","lui","elle","sa"],correct:2,explanation:"Stressed pronoun after preposition: pour elle"},
+    {prompt:"Nous ___ le cinéma. (préférer)",options:["préfère","préfères","préférons","préfèrent"],correct:2,explanation:"nous préférons — accent stays é before -ons"},
+    {prompt:"Où est-ce que tu ___ ? (habiter)",options:["habite","habites","habitez","habitons"],correct:1,explanation:"tu habites"},
+    {prompt:"Ils ___ jouer au foot demain. (futur composé)",options:["vais","allons","vont","allez"],correct:2,explanation:"ils vont + infinitif"},
+    {prompt:"Nous ___ une tarte. (faire)",options:["fais","fait","faisons","font"],correct:2,explanation:"nous faisons"},
+    {prompt:"Les photos ___ vacances. (de + les)",options:["du","de la","de l'","des"],correct:3,explanation:"de + les = des"},
+    {prompt:"Tu ___ bien ? (dormir)",options:["dors","dort","dormons","dormez"],correct:0,explanation:"tu dors"},
+    {prompt:"___, j'adore Paris ! (emphasis: me)",options:["Je","Me","Moi","Mon"],correct:2,explanation:"Stressed pronoun for emphasis: Moi, j'adore..."},
+    {prompt:"Elles ___ le sport. (préférer)",options:["préfère","préfères","préférons","préfèrent"],correct:3,explanation:"elles préfèrent — è before silent -ent"},
+    {prompt:"Vous ___ visiter Paris cet été. (futur composé)",options:["vais","va","allons","allez"],correct:3,explanation:"vous allez + infinitif"}
+  ];
+  return quizBlock("grand","🏆 Grand Quiz — Leçon 4",qs);
+}
+
+render();
+</script>
+</body>
+</html>
