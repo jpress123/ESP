@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Glorious Evolution — Immune System & Ecology</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --gold: #f0a500;
+    --gold-light: #ffd966;
+    --gold-glow: #f0a50066;
+    --amber: #e8751a;
+    --deep-purple: #1a0a2e;
+    --mid-purple: #2d1b4e;
+    --soft-purple: #4a2d6e;
+    --hex-blue: #4fc3f7;
+    --hex-teal: #26c6da;
+    --rose: #e84393;
+    --green-glow: #00e676;
+    --bg: #0d0618;
+    --card-bg: rgba(30, 15, 55, 0.85);
+    --text: #e8dff0;
+    --text-dim: #a89bc2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Quicksand', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background blobs */
+  .bg-canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+  }
+  .blob {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; animation: blobFloat 12s ease-in-out infinite;
+  }
+  .blob-1 { width: 500px; height: 500px; background: radial-gradient(circle, var(--gold) 0%, transparent 70%); top: -10%; left: -5%; animation-delay: 0s; }
+  .blob-2 { width: 400px; height: 400px; background: radial-gradient(circle, var(--soft-purple) 0%, transparent 70%); top: 40%; right: -10%; animation-delay: -4s; }
+  .blob-3 { width: 350px; height: 350px; background: radial-gradient(circle, var(--amber) 0%, transparent 70%); bottom: -5%; left: 30%; animation-delay: -8s; }
+  .blob-4 { width: 300px; height: 300px; background: radial-gradient(circle, var(--hex-teal) 0%, transparent 70%); top: 20%; left: 50%; animation-delay: -6s; opacity: 0.15; }
+
+  @keyframes blobFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -20px) scale(1.05); }
+    66% { transform: translate(-20px, 15px) scale(0.95); }
+  }
+
+  /* Particle effect */
+  .particles {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+  }
+  .particle {
+    position: absolute; width: 3px; height: 3px; background: var(--gold-light); border-radius: 50%;
+    animation: particleRise linear infinite; opacity: 0;
+  }
+  @keyframes particleRise {
+    0% { opacity: 0; transform: translateY(0) scale(0); }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.3; }
+    100% { opacity: 0; transform: translateY(-100vh) scale(1); }
+  }
+
+  .app-container {
+    position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 20px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center; padding: 40px 20px 30px; position: relative;
+  }
+  .header h1 {
+    font-family: 'Cinzel', serif; font-size: 2.2em; font-weight: 700;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--amber));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-shadow: none; margin-bottom: 8px;
+    animation: titleGlow 3s ease-in-out infinite;
+  }
+  @keyframes titleGlow {
+    0%, 100% { filter: drop-shadow(0 0 10px var(--gold-glow)); }
+    50% { filter: drop-shadow(0 0 25px var(--gold-glow)); }
+  }
+  .header .subtitle {
+    font-size: 1em; color: var(--text-dim); font-weight: 300; letter-spacing: 2px; text-transform: uppercase;
+  }
+  .header .hex-line {
+    width: 120px; height: 2px; margin: 16px auto 0;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  /* Navigation */
+  .nav-bar {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    padding: 20px 0; position: sticky; top: 0; z-index: 10;
+    background: linear-gradient(180deg, var(--bg) 60%, transparent); padding-bottom: 30px;
+  }
+  .nav-btn {
+    background: var(--card-bg); border: 1px solid var(--gold-glow);
+    color: var(--gold-light); padding: 8px 16px; border-radius: 25px;
+    font-family: 'Quicksand', sans-serif; font-size: 0.85em; font-weight: 600;
+    cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;
+  }
+  .nav-btn::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(240,165,0,0.15), transparent);
+    transition: left 0.5s ease;
+  }
+  .nav-btn:hover::before { left: 100%; }
+  .nav-btn:hover, .nav-btn.active {
+    background: linear-gradient(135deg, rgba(240,165,0,0.25), rgba(232,117,26,0.2));
+    border-color: var(--gold); box-shadow: 0 0 20px var(--gold-glow);
+    transform: translateY(-2px);
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    margin: 10px 0 25px; padding: 0 20px;
+  }
+  .progress-label {
+    font-size: 0.8em; color: var(--text-dim); margin-bottom: 6px; display: flex; justify-content: space-between;
+  }
+  .progress-track {
+    height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 3px; transition: width 0.6s ease;
+    background: linear-gradient(90deg, var(--gold), var(--amber), var(--rose));
+    box-shadow: 0 0 12px var(--gold-glow);
+  }
+
+  /* Sections */
+  .section {
+    display: none; animation: fadeSlide 0.5s ease;
+  }
+  .section.active { display: block; }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card-bg); border: 1px solid rgba(240,165,0,0.12);
+    border-radius: 20px; padding: 28px; margin-bottom: 24px;
+    backdrop-filter: blur(10px); position: relative; overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+  .card:hover { border-color: rgba(240,165,0,0.3); }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--amber), var(--gold));
+    opacity: 0.6;
+  }
+  .card h2 {
+    font-family: 'Cinzel', serif; font-size: 1.4em; font-weight: 600;
+    color: var(--gold-light); margin-bottom: 16px;
+  }
+  .card h3 {
+    font-size: 1.1em; font-weight: 600; color: var(--gold); margin: 18px 0 10px;
+  }
+  .card p, .card li {
+    line-height: 1.75; font-size: 0.95em; color: var(--text);
+  }
+  .card ul, .card ol {
+    padding-left: 20px; margin: 8px 0;
+  }
+  .card li { margin-bottom: 6px; }
+  .card li::marker { color: var(--gold); }
+
+  /* Key term badges */
+  .term {
+    display: inline-block; background: linear-gradient(135deg, rgba(240,165,0,0.2), rgba(232,117,26,0.15));
+    border: 1px solid rgba(240,165,0,0.3); border-radius: 6px;
+    padding: 2px 8px; font-weight: 600; color: var(--gold-light); font-size: 0.9em;
+  }
+
+  /* Example boxes */
+  .example-box {
+    background: linear-gradient(135deg, rgba(79,195,247,0.08), rgba(38,198,218,0.06));
+    border-left: 3px solid var(--hex-teal); border-radius: 0 12px 12px 0;
+    padding: 16px 20px; margin: 14px 0; font-size: 0.92em;
+  }
+  .example-box .ex-label {
+    font-weight: 700; color: var(--hex-teal); font-size: 0.8em;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+  }
+
+  .warning-box {
+    background: linear-gradient(135deg, rgba(232,67,147,0.08), rgba(232,117,26,0.06));
+    border-left: 3px solid var(--rose); border-radius: 0 12px 12px 0;
+    padding: 16px 20px; margin: 14px 0; font-size: 0.92em;
+  }
+  .warning-box .ex-label {
+    font-weight: 700; color: var(--rose); font-size: 0.8em;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+  }
+
+  /* Interactive diagrams */
+  .diagram {
+    background: rgba(0,0,0,0.3); border-radius: 16px; padding: 24px;
+    margin: 16px 0; text-align: center; position: relative;
+  }
+  .diagram svg { max-width: 100%; }
+
+  /* Accordion */
+  .accordion { margin: 12px 0; }
+  .acc-header {
+    background: rgba(240,165,0,0.1); border: 1px solid rgba(240,165,0,0.2);
+    border-radius: 12px; padding: 14px 20px; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    font-weight: 600; color: var(--gold-light); transition: all 0.3s;
+  }
+  .acc-header:hover { background: rgba(240,165,0,0.18); }
+  .acc-header .arrow { transition: transform 0.3s; font-size: 0.8em; }
+  .acc-header.open .arrow { transform: rotate(180deg); }
+  .acc-header.open { border-radius: 12px 12px 0 0; }
+  .acc-body {
+    display: none; background: rgba(0,0,0,0.2); border: 1px solid rgba(240,165,0,0.1);
+    border-top: none; border-radius: 0 0 12px 12px; padding: 18px 20px;
+  }
+  .acc-body.open { display: block; animation: fadeSlide 0.3s ease; }
+
+  /* Quiz styles */
+  .quiz-card {
+    background: var(--card-bg); border: 1px solid rgba(240,165,0,0.12);
+    border-radius: 20px; padding: 28px; margin-bottom: 20px;
+    backdrop-filter: blur(10px); position: relative;
+  }
+  .quiz-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--hex-teal), var(--gold), var(--amber));
+    opacity: 0.6; border-radius: 20px 20px 0 0;
+  }
+  .q-number {
+    font-family: 'Cinzel', serif; font-size: 0.8em; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;
+  }
+  .q-text { font-size: 1.05em; font-weight: 600; margin-bottom: 16px; line-height: 1.6; }
+
+  .q-options { display: flex; flex-direction: column; gap: 10px; }
+  .q-option {
+    background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 12px 18px; cursor: pointer;
+    transition: all 0.3s ease; font-size: 0.93em; line-height: 1.5;
+  }
+  .q-option:hover {
+    background: rgba(240,165,0,0.1); border-color: rgba(240,165,0,0.3);
+  }
+  .q-option.selected {
+    background: rgba(240,165,0,0.15); border-color: var(--gold);
+    box-shadow: 0 0 12px rgba(240,165,0,0.2);
+  }
+  .q-option.correct {
+    background: rgba(0,230,118,0.15); border-color: var(--green-glow);
+    box-shadow: 0 0 12px rgba(0,230,118,0.2);
+  }
+  .q-option.wrong {
+    background: rgba(232,67,147,0.15); border-color: var(--rose);
+  }
+  .q-feedback {
+    margin-top: 12px; padding: 12px 16px; border-radius: 10px; font-size: 0.9em;
+    display: none; line-height: 1.6;
+  }
+  .q-feedback.correct-fb { background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.3); color: var(--green-glow); display: block; }
+  .q-feedback.wrong-fb { background: rgba(232,67,147,0.1); border: 1px solid rgba(232,67,147,0.3); color: var(--rose); display: block; }
+
+  /* Score display */
+  .score-display {
+    text-align: center; padding: 40px; animation: fadeSlide 0.5s ease;
+  }
+  .score-circle {
+    width: 160px; height: 160px; border-radius: 50%; margin: 0 auto 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 4px solid var(--gold); position: relative;
+    background: radial-gradient(circle, rgba(240,165,0,0.15), transparent);
+  }
+  .score-circle::after {
+    content: ''; position: absolute; inset: -8px; border-radius: 50%;
+    border: 1px solid rgba(240,165,0,0.2); animation: pulseRing 2s ease-in-out infinite;
+  }
+  @keyframes pulseRing {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.08); opacity: 0.2; }
+  }
+  .score-num { font-family: 'Cinzel', serif; font-size: 2.4em; color: var(--gold-light); font-weight: 700; }
+  .score-label { font-size: 0.85em; color: var(--text-dim); }
+  .score-msg { font-size: 1.15em; color: var(--gold-light); margin-bottom: 8px; font-weight: 600; }
+  .score-sub { color: var(--text-dim); font-size: 0.95em; }
+
+  /* Buttons */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--amber));
+    color: var(--deep-purple); border: none; padding: 12px 28px;
+    border-radius: 25px; font-family: 'Quicksand', sans-serif; font-weight: 700;
+    font-size: 0.95em; cursor: pointer; transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(240,165,0,0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px); box-shadow: 0 6px 30px rgba(240,165,0,0.5);
+  }
+  .btn-secondary {
+    background: transparent; border: 1.5px solid var(--gold);
+    color: var(--gold-light); padding: 10px 24px; border-radius: 25px;
+    font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.9em;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .btn-secondary:hover {
+    background: rgba(240,165,0,0.1); box-shadow: 0 0 15px rgba(240,165,0,0.2);
+  }
+
+  .btn-group { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+
+  /* Food web SVG styles */
+  .fw-node { cursor: pointer; transition: transform 0.2s; }
+  .fw-node:hover { transform: scale(1.08); }
+  .fw-label { font-family: 'Quicksand', sans-serif; font-size: 11px; fill: var(--text); font-weight: 600; }
+  .fw-arrow { stroke: var(--gold); stroke-width: 1.5; fill: none; opacity: 0.5; }
+
+  /* Energy pyramid */
+  .pyramid-row {
+    display: flex; align-items: center; gap: 12px; margin: 8px 0; justify-content: center;
+  }
+  .pyramid-bar {
+    height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 0.85em; transition: all 0.4s ease; position: relative;
+  }
+  .pyramid-bar span { position: relative; z-index: 1; }
+  .pyramid-info { font-size: 0.82em; color: var(--text-dim); min-width: 80px; text-align: right; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .header h1 { font-size: 1.6em; }
+    .card { padding: 20px; }
+    .nav-btn { font-size: 0.78em; padding: 6px 12px; }
+    .app-container { padding: 12px; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-glow); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-canvas">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+</div>
+<div class="particles" id="particles"></div>
+
+<div class="app-container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>The Glorious Evolution</h1>
+    <p class="subtitle">Immune System & Basic Ecology</p>
+    <div class="hex-line"></div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-bar" id="navBar">
+    <button class="nav-btn active" onclick="showSection('infections')">Infections</button>
+    <button class="nav-btn" onclick="showSection('immune')">Immune Response</button>
+    <button class="nav-btn" onclick="showSection('vaccines')">Vaccinations</button>
+    <button class="nav-btn" onclick="showSection('allergies')">Allergies</button>
+    <button class="nav-btn" onclick="showSection('habitats')">Habitats</button>
+    <button class="nav-btn" onclick="showSection('foodwebs')">Food Webs</button>
+    <button class="nav-btn" onclick="showSection('energy')">Energy Flow</button>
+    <button class="nav-btn" onclick="showSection('quiz')">Test</button>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Your Progress</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION: INFECTIONS ==================== -->
+  <div class="section active" id="sec-infections">
+    <div class="card">
+      <h2>How Infections Happen</h2>
+      <p>Germs (bacteria, viruses, fungi) need a way <strong>into</strong> your body, a way to <strong>travel</strong> between people, and your body has ways to <strong>block</strong> them. Think of it like a castle: attackers need a gate, a road, and defenders.</p>
+
+      <h3>Pathways of Infection (How germs get in)</h3>
+      <ul>
+        <li><span class="term">Cuts & wounds</span> — A scrape on your knee lets bacteria from the ground straight into your blood.</li>
+        <li><span class="term">Breathing</span> — When someone with a cold sneezes, you inhale tiny droplets carrying the virus.</li>
+        <li><span class="term">Eating / drinking</span> — Drinking water with bacteria in it (like when camping near untreated streams) can make you sick.</li>
+      </ul>
+
+      <div class="example-box">
+        <div class="ex-label">Real-world example</div>
+        If you step on a rusty nail at the beach, bacteria from the soil can enter through the wound. That's why doctors ask if your tetanus shot is up to date.
+      </div>
+
+      <h3>Routes of Transmission (How germs travel)</h3>
+      <ul>
+        <li><span class="term">Droplet</span> — Sneezing or coughing sends tiny droplets into the air (flu, COVID).</li>
+        <li><span class="term">Direct contact</span> — Shaking hands with someone who has a cold, then touching your face.</li>
+        <li><span class="term">Contaminated food/water</span> — Eating chicken that wasn't cooked properly can spread Salmonella.</li>
+      </ul>
+
+      <h3>Protection Against Infection</h3>
+      <ul>
+        <li><span class="term">Washing hands</span> — Soap breaks apart the outer layer of many germs.</li>
+        <li><span class="term">Vaccination</span> — Trains your immune system to fight specific germs before you catch them.</li>
+        <li><span class="term">Cooking food properly</span> — Heat kills most bacteria in meat and eggs.</li>
+      </ul>
+
+      <h3>Three Anatomical Barriers</h3>
+      <p>Your body has built-in walls that stop germs before they even reach your cells:</p>
+      <ol>
+        <li><strong>Skin</strong> — Your largest organ acts like armour. As long as it's not cut, most germs can't get through.</li>
+        <li><strong>Mucous membranes</strong> — Sticky mucus in your nose and throat traps germs like flypaper.</li>
+        <li><strong>Stomach acid</strong> — A pool of acid (pH ~2) that destroys most bacteria you swallow.</li>
+      </ol>
+
+      <div class="example-box">
+        <div class="ex-label">Think of it this way</div>
+        Your body is like a medieval castle: the <strong>skin</strong> is the stone wall, <strong>mucus</strong> is the moat that traps invaders, and <strong>stomach acid</strong> is boiling oil poured on anything that gets inside.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION: IMMUNE RESPONSE ==================== -->
+  <div class="section" id="sec-immune">
+    <div class="card">
+      <h2>Your Immune Army</h2>
+      <p>When germs slip past your barriers, specialised cells kick into action. Each one has a specific job — like positions on a football team.</p>
+
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          Macrophages — The First Responders <span class="arrow">&#9660;</span>
+        </div>
+        <div class="acc-body">
+          <p><strong>Job:</strong> Macrophages patrol your body like security guards. When they find a germ, they <em>eat</em> it. This process is called <span class="term">phagocytosis</span>.</p>
+          <h3>Phagocytosis Step by Step</h3>
+          <ol>
+            <li>The macrophage detects a bacterium nearby.</li>
+            <li>It stretches its membrane around the bacterium, wrapping it up.</li>
+            <li>The bacterium is pulled inside into a bubble (vesicle).</li>
+            <li>Enzymes inside the macrophage digest and destroy the bacterium.</li>
+            <li>The macrophage displays pieces of the germ on its surface like a "wanted poster" — these are called <span class="term">antigens</span>.</li>
+          </ol>
+          <div class="example-box">
+            <div class="ex-label">Picture this</div>
+            Imagine a Pac-Man chomping a ghost. The macrophage surrounds the germ, swallows it, dissolves it, then shows a piece of it to the rest of the immune system: "Hey, look what I found — everyone watch out for this!"
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          T-Helper Cells — The Commanders <span class="arrow">&#9660;</span>
+        </div>
+        <div class="acc-body">
+          <p><strong>Job:</strong> T-Helper cells read the "wanted poster" (antigen) on the macrophage and send out chemical alarm signals to activate the rest of the immune system.</p>
+          <div class="example-box">
+            <div class="ex-label">Think of it like</div>
+            A football coach who spots the opponent's play and shouts instructions to the entire team. They don't fight directly — they coordinate.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          T-Killer Cells — The Destroyers <span class="arrow">&#9660;</span>
+        </div>
+        <div class="acc-body">
+          <p><strong>Job:</strong> Once activated by T-Helper cells, T-Killer cells find and destroy body cells that have already been infected by a virus. They punch holes in the infected cell's membrane.</p>
+          <div class="example-box">
+            <div class="ex-label">Real example</div>
+            When you get the flu, some of your throat cells get infected. T-Killer cells destroy those infected cells so the virus can't keep multiplying inside them.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          Plasma Cells — The Weapon Factories <span class="arrow">&#9660;</span>
+        </div>
+        <div class="acc-body">
+          <p><strong>Job:</strong> Plasma cells (made from B-cells) produce <span class="term">antibodies</span> — Y-shaped proteins that lock onto germs and mark them for destruction. One plasma cell can release thousands of antibodies per second.</p>
+          <div class="example-box">
+            <div class="ex-label">Analogy</div>
+            Antibodies are like sticky labels that stick to germs saying "DESTROY ME." Once labelled, macrophages can find and eat them much faster.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          Memory Cells — The Record Keepers <span class="arrow">&#9660;</span>
+        </div>
+        <div class="acc-body">
+          <p><strong>Job:</strong> After you recover, Memory cells remember exactly what that germ looked like. If the same germ comes back years later, they trigger a fast, powerful response — so fast you might not even feel sick.</p>
+          <div class="example-box">
+            <div class="ex-label">That's why</div>
+            You usually only get chickenpox once. Your memory cells "remember" the virus and crush it immediately if it shows up again.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>The Specific Immune Response — Full Sequence</h2>
+      <div class="diagram" id="immuneDiagram">
+        <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg">
+          <!-- Step boxes -->
+          <defs>
+            <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f0a500" stop-opacity="0.25"/><stop offset="100%" stop-color="#e8751a" stop-opacity="0.15"/></linearGradient>
+            <linearGradient id="gTeal" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4fc3f7" stop-opacity="0.2"/><stop offset="100%" stop-color="#26c6da" stop-opacity="0.1"/></linearGradient>
+            <marker id="arrowG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f0a500" opacity="0.7"/></marker>
+          </defs>
+
+          <!-- Row 1 -->
+          <rect x="10" y="10" width="140" height="70" rx="14" fill="url(#gGold)" stroke="#f0a500" stroke-opacity="0.4"/>
+          <text x="80" y="38" text-anchor="middle" fill="#ffd966" font-size="11" font-weight="700" font-family="Quicksand">1. Germ enters</text>
+          <text x="80" y="56" text-anchor="middle" fill="#e8dff0" font-size="9.5" font-family="Quicksand">Past skin/mucus</text>
+
+          <line x1="150" y1="45" x2="190" y2="45" stroke="#f0a500" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+          <rect x="190" y="10" width="150" height="70" rx="14" fill="url(#gGold)" stroke="#f0a500" stroke-opacity="0.4"/>
+          <text x="265" y="34" text-anchor="middle" fill="#ffd966" font-size="11" font-weight="700" font-family="Quicksand">2. Macrophage</text>
+          <text x="265" y="50" text-anchor="middle" fill="#e8dff0" font-size="9.5" font-family="Quicksand">eats germ &amp; shows</text>
+          <text x="265" y="64" text-anchor="middle" fill="#e8dff0" font-size="9.5" font-family="Quicksand">antigen on surface</text>
+
+          <line x1="340" y1="45" x2="380" y2="45" stroke="#f0a500" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+          <rect x="380" y="10" width="150" height="70" rx="14" fill="url(#gGold)" stroke="#f0a500" stroke-opacity="0.4"/>
+          <text x="455" y="34" text-anchor="middle" fill="#ffd966" font-size="11" font-weight="700" font-family="Quicksand">3. T-Helper reads</text>
+          <text x="455" y="50" text-anchor="middle" fill="#e8dff0" font-size="9.5" font-family="Quicksand">antigen, sends</text>
+          <text x="455" y="64" text-anchor="middle" fill="#e8dff0" font-size="9.5" font-family="Quicksand">alarm signals</text>
+
+          <!-- Arrow down from T-Helper -->
+          <line x1="455" y1="80" x2="455" y2="120" stroke="#f0a500" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+          <!-- Row 2 — branches -->
+          <rect x="80" y="130" width="160" height="70" rx="14" fill="url(#gTeal)" stroke="#4fc3f7" stroke-opacity="0.4"/>
+          <text x="160" y="155" text-anchor="middle" fill="#4fc3f7" font-size="11" font-weight="700" font-family="Quicksand">4a. T-Killer Cells</text>
+          <text x="160" y="172" text-anchor="middle" fill="#e8dff0" font-size="9.5" font-family="Quicksand">destroy infected</text>
+          <text x="160" y="186" text-anchor="middle" fill="#e8dff0" font-size="9.5" font-family="Quicksand">body cells</text>
+
+          <line x1="455" y1="130" x2="160" y2="130" stroke="#f0a500" stroke-width="1" stroke-dasharray="4" opacity="0.4"/>
+          <line x1="455" y1="130" x2="555" y2="130" stroke="#f0a500" stroke-width="1" stroke-dasharray="4" opacity="0.4"/>
+
+          <rect x="380" y="130" width="160" height="70" rx="14" fill="url(#gTeal)" stroke="#4fc3f7" stroke-opacity="0.4"/>
+          <text x="460" y="155" text-anchor="middle" fill="#4fc3f7" font-size="11" font-weight="700" font-family="Quicksand">4b. Plasma Cells</text>
+          <text x="460" y="172" text-anchor="middle" fill="#e8dff0" font-size="9.5" font-family="Quicksand">produce antibodies</text>
+          <text x="460" y="186" text-anchor="middle" fill="#e8dff0" font-size="9.5" font-family="Quicksand">that tag germs</text>
+
+          <!-- Arrows down -->
+          <line x1="160" y1="200" x2="310" y2="250" stroke="#f0a500" stroke-width="1.5" marker-end="url(#arrowG)" opacity="0.6"/>
+          <line x1="460" y1="200" x2="390" y2="250" stroke="#f0a500" stroke-width="1.5" marker-end="url(#arrowG)" opacity="0.6"/>
+
+          <!-- Final row -->
+          <rect x="250" y="250" width="200" height="70" rx="14" fill="url(#gGold)" stroke="#f0a500" stroke-opacity="0.5"/>
+          <text x="350" y="275" text-anchor="middle" fill="#ffd966" font-size="11" font-weight="700" font-family="Quicksand">5. Infection defeated</text>
+          <text x="350" y="292" text-anchor="middle" fill="#e8dff0" font-size="9.5" font-family="Quicksand">Memory cells remain</text>
+          <text x="350" y="306" text-anchor="middle" fill="#e8dff0" font-size="9.5" font-family="Quicksand">for future protection</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION: VACCINATIONS ==================== -->
+  <div class="section" id="sec-vaccines">
+    <div class="card">
+      <h2>Vaccinations</h2>
+
+      <h3>Active Immunisation</h3>
+      <p>Your body is given a <strong>weakened or dead</strong> form of the germ (or a piece of it). Your immune system fights it, makes antibodies, and — most importantly — creates <span class="term">memory cells</span>. This gives long-lasting protection.</p>
+      <div class="example-box">
+        <div class="ex-label">Example</div>
+        The <strong>MMR vaccine</strong> (measles, mumps, rubella) is given to children around age 1. It contains weakened viruses. Your body builds memory cells that protect you for life.
+      </div>
+
+      <h3>Passive Immunisation</h3>
+      <p>You receive <strong>ready-made antibodies</strong> from another source. These fight the infection immediately, but they don't last — your body didn't learn to make them itself, so no memory cells are formed.</p>
+      <div class="example-box">
+        <div class="ex-label">Example</div>
+        If someone is bitten by a venomous snake, they get an <strong>antivenom injection</strong> containing pre-made antibodies. It works fast but only temporarily.
+      </div>
+
+      <div class="diagram" style="padding:20px">
+        <table style="width:100%; border-collapse:separate; border-spacing:0 8px; font-size:0.9em;">
+          <tr>
+            <th style="text-align:left; color:var(--gold); padding:8px 12px;"></th>
+            <th style="text-align:center; color:var(--hex-teal); padding:8px;">Active</th>
+            <th style="text-align:center; color:var(--rose); padding:8px;">Passive</th>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.04); border-radius:8px;">
+            <td style="padding:10px 12px; font-weight:600;">What's given</td>
+            <td style="text-align:center; padding:10px;">Weakened/dead germ</td>
+            <td style="text-align:center; padding:10px;">Ready-made antibodies</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.02);">
+            <td style="padding:10px 12px; font-weight:600;">Memory cells?</td>
+            <td style="text-align:center; padding:10px; color:var(--green-glow);">Yes</td>
+            <td style="text-align:center; padding:10px; color:var(--rose);">No</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.04);">
+            <td style="padding:10px 12px; font-weight:600;">Speed</td>
+            <td style="text-align:center; padding:10px;">Slow (days-weeks)</td>
+            <td style="text-align:center; padding:10px;">Fast (immediate)</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.02);">
+            <td style="padding:10px 12px; font-weight:600;">Duration</td>
+            <td style="text-align:center; padding:10px;">Long-lasting / lifelong</td>
+            <td style="text-align:center; padding:10px;">Short-term</td>
+          </tr>
+        </table>
+      </div>
+
+      <h3>Advantages of Vaccination</h3>
+      <ol>
+        <li>Prevents deadly diseases (smallpox was wiped out entirely by vaccination).</li>
+        <li>Protects people who <em>can't</em> be vaccinated (babies, people with weak immune systems) through herd immunity.</li>
+        <li>Cheaper than treating the disease itself — prevents expensive hospital stays.</li>
+      </ol>
+
+      <h3>Disadvantages / Concerns</h3>
+      <ol>
+        <li>Mild side effects are common (sore arm, low fever for a day).</li>
+        <li>Some vaccines need multiple doses or boosters, which can be inconvenient.</li>
+        <li>Rare allergic reactions can occur in some individuals.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION: ALLERGIES ==================== -->
+  <div class="section" id="sec-allergies">
+    <div class="card">
+      <h2>Allergies</h2>
+
+      <h3>What is an Allergen?</h3>
+      <p>An <span class="term">allergen</span> is a normally harmless substance that the immune system mistakenly treats as dangerous. Your body overreacts to something that isn't actually a threat.</p>
+
+      <div class="example-box">
+        <div class="ex-label">Common allergens</div>
+        <strong>Pollen</strong> (from flowers and trees), <strong>peanuts</strong> (in food), and <strong>dust mites</strong> (tiny creatures living in pillows and carpets).
+      </div>
+
+      <h3>What Happens During an Allergic Reaction</h3>
+      <ol>
+        <li><strong>First exposure:</strong> Your body meets the allergen (e.g., pollen) and mistakenly decides it's harmful. <span class="term">Plasma cells</span> produce special antibodies (IgE) for that allergen.</li>
+        <li><strong>Antibodies attach</strong> to <span class="term">mast cells</span> (found in your skin, nose, and lungs) and wait.</li>
+        <li><strong>Second exposure:</strong> The allergen returns. It binds to the antibodies already sitting on the mast cells.</li>
+        <li>Mast cells burst open and release <span class="term">histamine</span>.</li>
+        <li>Histamine causes the symptoms: sneezing, itchy eyes, swelling, rash, or in severe cases, difficulty breathing.</li>
+      </ol>
+
+      <div class="warning-box">
+        <div class="ex-label">Key point</div>
+        The first time you encounter an allergen, you usually don't react. It's the <em>second</em> time (or later) that your body overreacts, because it already has antibodies waiting.
+      </div>
+
+      <h3>How Can Allergies Be Treated?</h3>
+      <ol>
+        <li><strong>Antihistamines</strong> — Medicines that block histamine from causing symptoms. Example: taking a pill before pollen season to stop sneezing.</li>
+        <li><strong>Desensitisation (allergy shots)</strong> — Small, increasing doses of the allergen are injected over months/years. This trains the immune system to stop overreacting.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION: HABITATS ==================== -->
+  <div class="section" id="sec-habitats">
+    <div class="card">
+      <h2>Habitats & Adaptations</h2>
+
+      <h3>Key Definitions</h3>
+      <ul>
+        <li><span class="term">Habitat</span> — The specific place where an organism lives (e.g., a pond, a rainforest canopy, under a rock).</li>
+        <li><span class="term">Ecosystem</span> — A habitat plus all the living things in it AND the non-living things (water, temperature, soil) that interact together.</li>
+        <li><span class="term">Biosphere</span> — All the ecosystems on Earth combined — every living thing and its environment.</li>
+        <li><span class="term">Ecology</span> — The science of studying how living things interact with each other and their environment.</li>
+        <li><span class="term">Adaptation</span> — A feature (body part, behaviour, or internal process) that helps an organism survive in its habitat.</li>
+      </ul>
+
+      <h3>Three Examples of Animal Adaptations</h3>
+      <div class="example-box">
+        <div class="ex-label">Structural</div>
+        <strong>Polar bears</strong> have thick white fur and a layer of fat (blubber). The fur provides camouflage in snow, and the fat insulates against freezing temperatures.
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Behavioural</div>
+        <strong>Arctic foxes</strong> curl into a tight ball and wrap their bushy tail over their nose when sleeping to reduce heat loss.
+      </div>
+      <div class="example-box">
+        <div class="ex-label">Physiological</div>
+        <strong>Camels</strong> can drink up to 100 litres of water in 10 minutes and store fat in their hump, allowing them to survive days without water in the desert.
+      </div>
+
+      <h3>Daily and Seasonal Changes</h3>
+      <p><strong>Daily:</strong> Temperature drops at night. Nocturnal animals like <strong>owls</strong> have adapted with large eyes to see in low light and hunt at night when their prey (mice) is active.</p>
+      <p style="margin-top:10px;"><strong>Seasonal:</strong> In winter, food becomes scarce and temperatures plummet. <strong>Hedgehogs</strong> hibernate — they slow their heart rate and body temperature to save energy until spring.</p>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION: FOOD WEBS ==================== -->
+  <div class="section" id="sec-foodwebs">
+    <div class="card">
+      <h2>Food Webs</h2>
+
+      <h3>Key Definitions</h3>
+      <ul>
+        <li><span class="term">Population</span> — All the individuals of one species living in the same area (e.g., all the rabbits in a meadow).</li>
+        <li><span class="term">Producer</span> — An organism that makes its own food using sunlight (photosynthesis). Example: grass, oak trees, algae.</li>
+        <li><span class="term">Consumer</span> — An organism that eats other organisms. Example: rabbits eat grass, hawks eat rabbits.</li>
+        <li><span class="term">Decomposer</span> — An organism that breaks down dead matter and recycles nutrients back into the soil. Example: fungi, earthworms, bacteria.</li>
+        <li><span class="term">Food chain</span> — A single pathway showing what eats what: Grass → Rabbit → Fox.</li>
+        <li><span class="term">Food web</span> — Many food chains linked together, showing the full network of who eats whom in an ecosystem.</li>
+      </ul>
+
+      <h3>What Happens if You Remove a Species?</h3>
+      <div class="example-box">
+        <div class="ex-label">Example — meadow food web</div>
+        <strong>If all the frogs disappeared</strong> from a pond ecosystem: insects (which frogs eat) would multiply rapidly, damaging crops and plants. Meanwhile, herons (which eat frogs) would lose a food source, and their population would decline. The whole web shifts.
+      </div>
+
+      <h3>Invasive Species</h3>
+      <p>An <span class="term">invasive species</span> is a non-native organism introduced to an ecosystem where it has no natural predators. It can outcompete native species for food and space, causing populations to crash.</p>
+      <div class="example-box">
+        <div class="ex-label">Real example</div>
+        <strong>Cane toads</strong> were introduced to Australia in 1935 to control beetles. With no natural predators, their population exploded. They poison animals that try to eat them and compete with native frogs for food.
+      </div>
+
+      <h3>Three Ways Humans Negatively Impact Ecosystems</h3>
+      <ol>
+        <li><strong>Deforestation</strong> — Cutting down forests destroys habitats. Orangutans in Borneo are critically endangered because their rainforest home is being cleared for palm oil farms.</li>
+        <li><strong>Pollution</strong> — Plastic waste in the ocean is eaten by sea turtles who mistake it for jellyfish, often killing them.</li>
+        <li><strong>Overfishing</strong> — Taking too many fish (like Atlantic cod) faster than they can reproduce crashes their population and disrupts the entire marine food web.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION: ENERGY FLOW ==================== -->
+  <div class="section" id="sec-energy">
+    <div class="card">
+      <h2>Flow of Energy</h2>
+
+      <h3>Consumer Levels</h3>
+      <ul>
+        <li><span class="term">Primary consumer</span> — Eats producers. Example: a <strong>grasshopper</strong> eating grass.</li>
+        <li><span class="term">Secondary consumer</span> — Eats primary consumers. Example: a <strong>frog</strong> eating the grasshopper.</li>
+        <li><span class="term">Tertiary consumer</span> — Eats secondary consumers. Example: a <strong>hawk</strong> eating the frog.</li>
+      </ul>
+
+      <h3>The Energy Pyramid</h3>
+      <p>Energy decreases as you move up each level. At every step, about <strong>90%</strong> of energy is lost (as heat from movement, body warmth, and life processes). Only ~10% passes to the next level.</p>
+
+      <div class="diagram" style="padding: 30px 16px;">
+        <div class="pyramid-row">
+          <div class="pyramid-info">100 kJ</div>
+          <div class="pyramid-bar" style="width:50px; background: linear-gradient(135deg, #e84393, #d63031); color:white; font-size:0.75em;">
+            <span>Hawk</span>
+          </div>
+        </div>
+        <div class="pyramid-row">
+          <div class="pyramid-info">1,000 kJ</div>
+          <div class="pyramid-bar" style="width:130px; background: linear-gradient(135deg, #f0a500, #e8751a); color:#1a0a2e;">
+            <span>Frog</span>
+          </div>
+        </div>
+        <div class="pyramid-row">
+          <div class="pyramid-info">10,000 kJ</div>
+          <div class="pyramid-bar" style="width:240px; background: linear-gradient(135deg, #26c6da, #4fc3f7); color:#1a0a2e;">
+            <span>Grasshopper</span>
+          </div>
+        </div>
+        <div class="pyramid-row">
+          <div class="pyramid-info">100,000 kJ</div>
+          <div class="pyramid-bar" style="width:360px; background: linear-gradient(135deg, #00e676, #69f0ae); color:#1a0a2e;">
+            <span>Grass (Producer)</span>
+          </div>
+        </div>
+        <p style="margin-top:16px; font-size:0.85em; color:var(--text-dim);">Each level keeps only ~10% of the energy from the level below it.</p>
+      </div>
+
+      <h3>Calculating Energy Flow</h3>
+      <div class="example-box">
+        <div class="ex-label">Worked example</div>
+        A field of grass captures <strong>100,000 kJ</strong> of energy from the sun.<br><br>
+        Grasshoppers (primary consumers) get 10% → <strong>10,000 kJ</strong><br>
+        Frogs (secondary consumers) get 10% of that → <strong>1,000 kJ</strong><br>
+        Hawks (tertiary consumers) get 10% of that → <strong>100 kJ</strong><br><br>
+        <strong>Formula:</strong> Energy at next level = Energy at current level × 0.10
+      </div>
+
+      <h3>Biomass Also Decreases</h3>
+      <p><span class="term">Biomass</span> is the total mass of living organisms at each level. Like energy, biomass gets smaller at higher levels. There are far more blades of grass (by mass) than hawks. This is why top predators are rare — there simply isn't enough energy to support many of them.</p>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION: QUIZ ==================== -->
+  <div class="section" id="sec-quiz">
+    <div class="card" style="text-align:center;">
+      <h2>Test Your Knowledge</h2>
+      <p>15 questions covering everything you've learned. Choose the best answer for each.</p>
+      <div class="btn-group">
+        <button class="btn-primary" onclick="startQuiz()">Begin Test</button>
+      </div>
+    </div>
+
+    <div id="quizContainer"></div>
+    <div id="quizScore" style="display:none;"></div>
+
+    <div id="quizNav" style="display:none;" class="btn-group">
+      <button class="btn-secondary" onclick="submitQuiz()">Submit Answers</button>
+    </div>
+  </div>
+
+</div><!-- /app-container -->
+
+<script>
+// ========== PARTICLES ==========
+(function(){
+  const pc = document.getElementById('particles');
+  for(let i=0; i<30; i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random()*100 + '%';
+    p.style.animationDuration = (6 + Math.random()*10) + 's';
+    p.style.animationDelay = Math.random()*10 + 's';
+    p.style.width = p.style.height = (2 + Math.random()*3) + 'px';
+    pc.appendChild(p);
+  }
+})();
+
+// ========== NAVIGATION ==========
+const sections = ['infections','immune','vaccines','allergies','habitats','foodwebs','energy','quiz'];
+let visited = new Set(['infections']);
+
+function showSection(id){
+  visited.add(id);
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach((b,i) => {
+    b.classList.toggle('active', sections[i]===id);
+  });
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress(){
+  const pct = Math.round((visited.size / sections.length)*100);
+  document.getElementById('progressPct').textContent = pct+'%';
+  document.getElementById('progressFill').style.width = pct+'%';
+}
+
+// ========== ACCORDION ==========
+function toggleAcc(el){
+  const body = el.nextElementSibling;
+  const isOpen = el.classList.contains('open');
+  el.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// ========== QUIZ ==========
+const quizData = [
+  {q:"Which of these is a route of transmission for germs?", opts:["Stomach acid","Droplet spread through sneezing","Skin barrier","White blood cells"], ans:1, explain:"Sneezing sends tiny droplets carrying germs through the air to other people."},
+  {q:"What is the correct order of phagocytosis?", opts:["Detect → Surround → Pull inside → Digest → Display antigen","Digest → Surround → Detect → Display","Display antigen → Detect → Eat → Surround","Surround → Detect → Display → Digest"], ans:0, explain:"The macrophage first detects the germ, wraps around it, pulls it in, digests it, then displays the antigen."},
+  {q:"What do T-Helper cells do?", opts:["Directly kill infected cells","Produce antibodies","Read antigens and send alarm signals to activate other cells","Form the skin barrier"], ans:2, explain:"T-Helper cells are the coordinators — they read the antigen and alert the rest of the immune system."},
+  {q:"Plasma cells produce:", opts:["Histamine","Antigens","Antibodies","Mucus"], ans:2, explain:"Plasma cells are antibody factories — they produce Y-shaped proteins that tag germs for destruction."},
+  {q:"Why do you usually only get chickenpox once?", opts:["The virus is too weak to come back","Memory cells remember the virus and fight it fast","Your skin becomes immune to the virus","Antibiotics prevent reinfection"], ans:1, explain:"Memory cells stay in your body for years and launch a rapid response if the same virus returns."},
+  {q:"Active immunisation gives you:", opts:["Ready-made antibodies for fast protection","A weakened germ so your body makes its own memory cells","Antihistamines","Antibiotics"], ans:1, explain:"Active immunisation introduces a weakened/dead germ. Your body builds antibodies AND memory cells for long-lasting protection."},
+  {q:"Which is an example of passive immunisation?", opts:["MMR vaccine as a child","Snake antivenom injection","Flu vaccine before winter","Chickenpox vaccine"], ans:1, explain:"Antivenom contains pre-made antibodies from another source — fast but temporary, with no memory cells formed."},
+  {q:"An allergen is:", opts:["A type of white blood cell","A normally harmless substance the immune system overreacts to","A dangerous toxin from bacteria","Medicine that treats allergies"], ans:1, explain:"Allergens (pollen, peanuts, dust mites) are harmless to most people, but the allergic person's immune system treats them as threats."},
+  {q:"During an allergic reaction, which cell releases histamine?", opts:["Macrophage","T-Killer cell","Mast cell","Red blood cell"], ans:2, explain:"Mast cells burst open and release histamine, which causes symptoms like sneezing, swelling, and itching."},
+  {q:"What is the correct definition of an ecosystem?", opts:["Just the animals in a forest","A habitat plus all living and non-living things interacting","The entire planet","Only the plants in one area"], ans:1, explain:"An ecosystem includes the habitat, all organisms, AND non-living factors (water, temperature, soil) that interact."},
+  {q:"A polar bear's thick fur and blubber is an example of:", opts:["A behavioural adaptation","A structural adaptation","A food web","Decomposition"], ans:1, explain:"Thick fur and blubber are physical body features (structural adaptations) that help polar bears survive the cold."},
+  {q:"In a food web, what is a decomposer?", opts:["An animal that hunts others","An organism that makes food from sunlight","An organism that breaks down dead matter and recycles nutrients","A plant that grows in water"], ans:2, explain:"Decomposers (fungi, bacteria, earthworms) break down dead organisms and return nutrients to the soil."},
+  {q:"If all frogs disappeared from a pond, what would likely happen to the insect population?", opts:["It would decrease","It would stay the same","It would increase rapidly","Insects would move to another pond"], ans:2, explain:"Without frogs eating them, insects would have fewer predators and their population would boom."},
+  {q:"A field of grass captures 50,000 kJ of energy. How much energy reaches the secondary consumers?", opts:["5,000 kJ","500 kJ","50 kJ","50,000 kJ"], ans:1, explain:"Producers: 50,000 kJ → Primary consumers get 10% = 5,000 kJ → Secondary consumers get 10% of that = 500 kJ."},
+  {q:"Why are top predators (like hawks) rare in ecosystems?", opts:["They eat too much food","There isn't enough energy at the top of the pyramid to support many of them","They are hunted by humans","They don't reproduce often"], ans:1, explain:"Only ~10% of energy passes up each level. By the top, there's very little energy left — so ecosystems can only support a few top predators."}
+];
+
+let quizStarted = false;
+let quizAnswers = new Array(quizData.length).fill(-1);
+let quizSubmitted = false;
+
+function startQuiz(){
+  quizStarted = true;
+  quizSubmitted = false;
+  quizAnswers.fill(-1);
+  const container = document.getElementById('quizContainer');
+  let html = '';
+  quizData.forEach((q,i) => {
+    html += `<div class="quiz-card" id="qcard-${i}">
+      <div class="q-number">Question ${i+1} of ${quizData.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-options">
+        ${q.opts.map((o,j) => `<div class="q-option" id="qopt-${i}-${j}" onclick="selectAnswer(${i},${j})">${o}</div>`).join('')}
+      </div>
+      <div class="q-feedback" id="qfb-${i}"></div>
+    </div>`;
+  });
+  container.innerHTML = html;
+  document.getElementById('quizNav').style.display = 'flex';
+  document.getElementById('quizScore').style.display = 'none';
+}
+
+function selectAnswer(qi, oi){
+  if(quizSubmitted) return;
+  quizAnswers[qi] = oi;
+  quizData[qi].opts.forEach((_,j) => {
+    document.getElementById(`qopt-${qi}-${j}`).classList.toggle('selected', j===oi);
+  });
+}
+
+function submitQuiz(){
+  if(quizAnswers.includes(-1)){
+    alert('Please answer all questions before submitting.');
+    const firstUnanswered = quizAnswers.indexOf(-1);
+    document.getElementById(`qcard-${firstUnanswered}`).scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  quizSubmitted = true;
+  let score = 0;
+
+  quizData.forEach((q,i) => {
+    const chosen = quizAnswers[i];
+    const correct = q.ans;
+    const fb = document.getElementById(`qfb-${i}`);
+
+    if(chosen === correct){
+      score++;
+      document.getElementById(`qopt-${i}-${chosen}`).classList.add('correct');
+      fb.className = 'q-feedback correct-fb';
+      fb.textContent = '✓ Correct! ' + q.explain;
+    } else {
+      document.getElementById(`qopt-${i}-${chosen}`).classList.add('wrong');
+      document.getElementById(`qopt-${i}-${correct}`).classList.add('correct');
+      fb.className = 'q-feedback wrong-fb';
+      fb.textContent = '✗ ' + q.explain;
+    }
+  });
+
+  // Show score
+  const pct = Math.round((score/quizData.length)*100);
+  let msg = '', sub = '';
+  if(pct >= 90){ msg = 'The Glorious Evolution is Complete!'; sub = 'Outstanding mastery of the material.'; }
+  else if(pct >= 70){ msg = 'Strong Progress, Evolving Well'; sub = 'Review the topics you missed, then try again.'; }
+  else if(pct >= 50){ msg = 'The Evolution Continues...'; sub = 'Go back through the lessons and focus on the highlighted areas.'; }
+  else { msg = 'More Study Needed'; sub = 'Revisit each section carefully before retaking the test.'; }
+
+  document.getElementById('quizScore').style.display = 'block';
+  document.getElementById('quizScore').innerHTML = `
+    <div class="score-display">
+      <div class="score-circle">
+        <div class="score-num">${score}/${quizData.length}</div>
+        <div class="score-label">${pct}%</div>
+      </div>
+      <div class="score-msg">${msg}</div>
+      <div class="score-sub">${sub}</div>
+      <div class="btn-group" style="margin-top:24px;">
+        <button class="btn-primary" onclick="startQuiz()">Retake Test</button>
+        <button class="btn-secondary" onclick="showSection('infections')">Review Lessons</button>
+      </div>
+    </div>`;
+
+  document.getElementById('quizNav').style.display = 'none';
+  document.getElementById('quizScore').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// Init
+updateProgress();
+</script>
+</body>
+</html>
