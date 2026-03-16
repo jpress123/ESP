@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Glorious Evolution — Interactive Slides</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --gold: #f0a500;
+    --gold-light: #ffd966;
+    --gold-glow: rgba(240,165,0,0.4);
+    --amber: #e8751a;
+    --deep-purple: #0d0618;
+    --mid-purple: #1a0a2e;
+    --soft-purple: #2d1b4e;
+    --card-purple: #1e0f37;
+    --hex-teal: #26c6da;
+    --hex-blue: #4fc3f7;
+    --rose: #e84393;
+    --green: #00e676;
+    --text: #ede5f5;
+    --text-dim: #a89bc2;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family:'Quicksand',sans-serif; background:var(--deep-purple);
+    color:var(--text); height:100vh; overflow:hidden; user-select:none;
+  }
+
+  /* ===== BACKGROUND ===== */
+  .bg-layer {
+    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .orb {
+    position:absolute; border-radius:50%; filter:blur(90px); opacity:0.25;
+    animation:orbDrift 14s ease-in-out infinite;
+  }
+  .orb-1{width:600px;height:600px;background:radial-gradient(circle,var(--gold),transparent 70%);top:-15%;left:-10%;animation-delay:0s;}
+  .orb-2{width:450px;height:450px;background:radial-gradient(circle,var(--soft-purple),transparent 70%);bottom:-10%;right:-8%;animation-delay:-5s;}
+  .orb-3{width:350px;height:350px;background:radial-gradient(circle,var(--amber),transparent 70%);top:50%;left:60%;animation-delay:-9s;opacity:0.15;}
+  .orb-4{width:300px;height:300px;background:radial-gradient(circle,var(--hex-teal),transparent 70%);top:10%;right:20%;animation-delay:-3s;opacity:0.1;}
+  @keyframes orbDrift {
+    0%,100%{transform:translate(0,0) scale(1);}
+    33%{transform:translate(25px,-18px) scale(1.04);}
+    66%{transform:translate(-18px,12px) scale(0.96);}
+  }
+
+  /* Rising particles */
+  .sparks{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  .spark{
+    position:absolute;width:2px;height:2px;background:var(--gold-light);border-radius:50%;
+    opacity:0;animation:sparkUp linear infinite;
+  }
+  @keyframes sparkUp {
+    0%{opacity:0;transform:translateY(0) scale(0);}
+    8%{opacity:0.7;}
+    85%{opacity:0.2;}
+    100%{opacity:0;transform:translateY(-100vh) scale(1);}
+  }
+
+  /* ===== SLIDE VIEWPORT ===== */
+  .slide-viewport {
+    position:relative; z-index:1; width:100%; height:100vh;
+    display:flex; flex-direction:column;
+  }
+
+  /* Top bar */
+  .top-bar {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 28px; flex-shrink:0;
+    background:linear-gradient(180deg,rgba(13,6,24,0.95),transparent);
+  }
+  .top-title {
+    font-family:'Cinzel',serif; font-size:1em; font-weight:600;
+    background:linear-gradient(135deg,var(--gold-light),var(--gold));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .slide-counter {
+    font-size:0.85em; color:var(--text-dim); font-weight:500;
+    background:rgba(255,255,255,0.06); padding:5px 14px; border-radius:20px;
+    border:1px solid rgba(240,165,0,0.15);
+  }
+  .topic-badge {
+    font-size:0.75em; color:var(--hex-teal); font-weight:600;
+    text-transform:uppercase; letter-spacing:1.5px;
+    background:rgba(38,198,218,0.1); padding:5px 12px; border-radius:20px;
+    border:1px solid rgba(38,198,218,0.2);
+  }
+
+  /* Progress bar */
+  .progress-track {
+    height:3px; background:rgba(255,255,255,0.06); flex-shrink:0;
+  }
+  .progress-fill {
+    height:100%; transition:width 0.5s ease;
+    background:linear-gradient(90deg,var(--gold),var(--amber),var(--rose));
+    box-shadow:0 0 10px var(--gold-glow);
+  }
+
+  /* Slide area */
+  .slide-area {
+    flex:1; display:flex; align-items:center; justify-content:center;
+    padding:10px 60px 20px; position:relative; overflow:hidden;
+  }
+
+  .slide {
+    display:none; width:100%; max-width:880px; animation:slideFade 0.45s ease;
+  }
+  .slide.active { display:flex; flex-direction:column; }
+  @keyframes slideFade {
+    from{opacity:0;transform:translateX(30px);}
+    to{opacity:1;transform:translateX(0);}
+  }
+  @keyframes slideFadeBack {
+    from{opacity:0;transform:translateX(-30px);}
+    to{opacity:1;transform:translateX(0);}
+  }
+
+  /* Slide types */
+  .slide-title-page {
+    text-align:center; justify-content:center; align-items:center; min-height:65vh;
+  }
+  .slide-title-page h1 {
+    font-family:'Cinzel',serif; font-size:2.8em; font-weight:700;
+    background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--amber));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    margin-bottom:12px; line-height:1.2;
+  }
+  .slide-title-page .tagline {
+    font-size:1.15em; color:var(--text-dim); font-weight:300; letter-spacing:1px;
+  }
+  .slide-title-page .divider {
+    width:80px; height:2px; margin:20px auto;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+  .slide-title-page .start-hint {
+    margin-top:30px; font-size:0.85em; color:var(--gold);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100%{opacity:0.5;}50%{opacity:1;}
+  }
+
+  /* Content slides */
+  .slide-content { padding:0 10px; }
+  .slide-content .slide-heading {
+    font-family:'Cinzel',serif; font-size:1.7em; font-weight:600;
+    color:var(--gold-light); margin-bottom:20px; line-height:1.3;
+  }
+  .slide-content .slide-subheading {
+    font-size:0.8em; color:var(--hex-teal); text-transform:uppercase;
+    letter-spacing:2px; font-weight:600; margin-bottom:8px;
+  }
+  .slide-content p { font-size:1.05em; line-height:1.8; margin-bottom:14px; }
+  .slide-content .highlight {
+    color:var(--gold-light); font-weight:600;
+  }
+  .slide-content ul, .slide-content ol {
+    padding-left:22px; margin:10px 0;
+  }
+  .slide-content li {
+    font-size:1em; line-height:1.8; margin-bottom:8px;
+  }
+  .slide-content li::marker { color:var(--gold); }
+
+  /* Two-column layout */
+  .two-col {
+    display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start;
+  }
+  @media(max-width:700px){ .two-col{grid-template-columns:1fr;} }
+
+  /* Info cards inside slides */
+  .info-card {
+    background:rgba(30,15,55,0.7); border:1px solid rgba(240,165,0,0.15);
+    border-radius:16px; padding:20px; position:relative; overflow:hidden;
+  }
+  .info-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,var(--gold),var(--amber)); opacity:0.5;
+  }
+  .info-card h3 {
+    font-size:1em; font-weight:700; color:var(--gold); margin-bottom:8px;
+  }
+  .info-card p, .info-card li { font-size:0.92em; line-height:1.7; }
+
+  .teal-card {
+    background:rgba(38,198,218,0.06); border-color:rgba(38,198,218,0.2);
+  }
+  .teal-card::before { background:linear-gradient(90deg,var(--hex-teal),var(--hex-blue)); }
+  .teal-card h3 { color:var(--hex-teal); }
+
+  .rose-card {
+    background:rgba(232,67,147,0.06); border-color:rgba(232,67,147,0.2);
+  }
+  .rose-card::before { background:linear-gradient(90deg,var(--rose),#fd79a8); }
+  .rose-card h3 { color:var(--rose); }
+
+  /* Term pill */
+  .term {
+    display:inline; background:rgba(240,165,0,0.18); border:1px solid rgba(240,165,0,0.3);
+    border-radius:5px; padding:1px 7px; font-weight:600; color:var(--gold-light); font-size:0.95em;
+  }
+
+  /* Emoji icon circles */
+  .icon-circle {
+    width:52px; height:52px; border-radius:50%; display:flex; align-items:center;
+    justify-content:center; font-size:1.6em; margin-bottom:12px; flex-shrink:0;
+    background:rgba(240,165,0,0.12); border:1.5px solid rgba(240,165,0,0.25);
+  }
+  .icon-circle.teal { background:rgba(38,198,218,0.12); border-color:rgba(38,198,218,0.25); }
+  .icon-circle.rose { background:rgba(232,67,147,0.12); border-color:rgba(232,67,147,0.25); }
+  .icon-circle.green { background:rgba(0,230,118,0.12); border-color:rgba(0,230,118,0.25); }
+
+  /* Diagram / visual boxes */
+  .visual-box {
+    background:rgba(0,0,0,0.25); border-radius:16px; padding:24px; text-align:center;
+  }
+  .visual-box svg { max-width:100%; height:auto; }
+
+  /* Pyramid bars */
+  .pyramid-row { display:flex; align-items:center; gap:12px; margin:6px auto; justify-content:center; }
+  .pyr-bar {
+    height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-weight:600; font-size:0.82em; color:#1a0a2e;
+  }
+  .pyr-label { font-size:0.8em; color:var(--text-dim); min-width:70px; text-align:right; }
+
+  /* Comparison table */
+  .comp-table { width:100%; border-collapse:separate; border-spacing:0 6px; font-size:0.9em; }
+  .comp-table th { color:var(--gold); font-size:0.85em; text-transform:uppercase; letter-spacing:1px; padding:8px; }
+  .comp-table td { padding:10px 12px; background:rgba(255,255,255,0.03); text-align:center; }
+  .comp-table td:first-child { text-align:left; font-weight:600; color:var(--gold-light); border-radius:8px 0 0 8px; }
+  .comp-table td:last-child { border-radius:0 8px 8px 0; }
+  .green-text { color:var(--green); }
+  .rose-text { color:var(--rose); }
+
+  /* Three-card row */
+  .three-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media(max-width:700px){ .three-cards{grid-template-columns:1fr;} }
+
+  /* Interactive reveal cards */
+  .reveal-card {
+    background:rgba(30,15,55,0.7); border:1px solid rgba(240,165,0,0.15);
+    border-radius:14px; padding:18px; cursor:pointer; transition:all 0.3s;
+    text-align:center; min-height:120px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+  }
+  .reveal-card:hover { border-color:var(--gold); background:rgba(240,165,0,0.08); transform:translateY(-3px); }
+  .reveal-card .reveal-front { transition:opacity 0.3s; }
+  .reveal-card .reveal-back { display:none; text-align:left; font-size:0.88em; line-height:1.6; }
+  .reveal-card.flipped .reveal-front { display:none; }
+  .reveal-card.flipped .reveal-back { display:block; animation:slideFade 0.3s ease; }
+  .reveal-card .tap-hint { font-size:0.72em; color:var(--text-dim); margin-top:8px; }
+
+  /* Flow steps */
+  .flow-steps {
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .flow-step {
+    display:flex; align-items:flex-start; gap:14px;
+    background:rgba(255,255,255,0.03); border-radius:12px; padding:14px 16px;
+    border-left:3px solid var(--gold); font-size:0.92em; line-height:1.6;
+  }
+  .flow-num {
+    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(135deg,var(--gold),var(--amber));
+    color:var(--mid-purple); font-weight:700; font-size:0.85em;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .flow-step.teal-step { border-left-color:var(--hex-teal); }
+  .flow-step.teal-step .flow-num { background:linear-gradient(135deg,var(--hex-teal),var(--hex-blue)); }
+
+  /* Bottom nav */
+  .bottom-bar {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 28px; flex-shrink:0;
+    background:linear-gradient(0deg,rgba(13,6,24,0.95),transparent);
+  }
+  .nav-arrow {
+    width:48px; height:48px; border-radius:50%; border:1.5px solid rgba(240,165,0,0.3);
+    background:rgba(30,15,55,0.8); color:var(--gold); font-size:1.3em;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:all 0.3s;
+  }
+  .nav-arrow:hover {
+    background:rgba(240,165,0,0.15); border-color:var(--gold);
+    box-shadow:0 0 20px rgba(240,165,0,0.3); transform:scale(1.08);
+  }
+  .nav-arrow.disabled { opacity:0.25; pointer-events:none; }
+
+  .slide-dots {
+    display:flex; gap:6px; flex-wrap:wrap; justify-content:center; max-width:60%;
+  }
+  .dot {
+    width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.12);
+    cursor:pointer; transition:all 0.3s;
+  }
+  .dot.active {
+    background:var(--gold); box-shadow:0 0 8px var(--gold-glow); transform:scale(1.3);
+  }
+  .dot.visited { background:rgba(240,165,0,0.35); }
+  .dot:hover { background:rgba(240,165,0,0.6); }
+
+  /* Keyboard hint */
+  .key-hint {
+    position:fixed; bottom:80px; right:24px; z-index:10;
+    font-size:0.7em; color:var(--text-dim); text-align:right;
+    opacity:0.5; pointer-events:none;
+  }
+
+  @media(max-width:600px){
+    .slide-area{padding:10px 20px 10px;}
+    .slide-title-page h1{font-size:1.8em;}
+    .slide-content .slide-heading{font-size:1.3em;}
+    .top-bar,.bottom-bar{padding:10px 16px;}
+    .three-cards{grid-template-columns:1fr;}
+    .two-col{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-layer">
+  <div class="orb orb-1"></div><div class="orb orb-2"></div>
+  <div class="orb orb-3"></div><div class="orb orb-4"></div>
+</div>
+<div class="sparks" id="sparks"></div>
+
+<div class="slide-viewport">
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="top-title">The Glorious Evolution</div>
+    <div class="topic-badge" id="topicBadge">Welcome</div>
+    <div class="slide-counter" id="slideCounter">1 / 28</div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progFill" style="width:3.5%"></div></div>
+
+  <!-- Slide area -->
+  <div class="slide-area" id="slideArea">
+
+    <!-- ========== SLIDE 0: TITLE ========== -->
+    <div class="slide slide-title-page active" data-topic="Welcome">
+      <h1>Immune System<br>&amp; Basic Ecology</h1>
+      <div class="divider"></div>
+      <div class="tagline">An interactive study guide for Elia</div>
+      <div class="start-hint">Press &rarr; or swipe to begin</div>
+    </div>
+
+    <!-- ========== SLIDE 1: TOPIC INTRO — INFECTIONS ========== -->
+    <div class="slide slide-content" data-topic="Infections">
+      <div class="slide-subheading">Topic 3 &bull; Microbes &amp; Disease</div>
+      <div class="slide-heading">How Do Germs Get Inside You?</div>
+      <p>Your body is like a castle. Germs are the invaders trying to break in. They need a <span class="highlight">way in</span>, a <span class="highlight">road to travel</span>, and your body has <span class="highlight">walls to block them</span>.</p>
+      <div class="three-cards" style="margin-top:18px;">
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle">&#128681;</div>
+            <strong>Pathways In</strong>
+            <div class="tap-hint">tap to reveal</div>
+          </div>
+          <div class="reveal-back">
+            <strong style="color:var(--gold)">Cuts &amp; wounds</strong> — scrape lets bacteria into blood<br><br>
+            <strong style="color:var(--gold)">Breathing</strong> — inhale virus droplets from a sneeze<br><br>
+            <strong style="color:var(--gold)">Eating/drinking</strong> — swallowing contaminated water
+          </div>
+        </div>
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle teal">&#128652;</div>
+            <strong>Routes of Travel</strong>
+            <div class="tap-hint">tap to reveal</div>
+          </div>
+          <div class="reveal-back">
+            <strong style="color:var(--hex-teal)">Droplet</strong> — sneeze/cough sends germs airborne<br><br>
+            <strong style="color:var(--hex-teal)">Direct contact</strong> — handshake then touch face<br><br>
+            <strong style="color:var(--hex-teal)">Contaminated food</strong> — undercooked chicken (Salmonella)
+          </div>
+        </div>
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle green">&#128737;</div>
+            <strong>Protection</strong>
+            <div class="tap-hint">tap to reveal</div>
+          </div>
+          <div class="reveal-back">
+            <strong style="color:var(--green)">Handwashing</strong> — soap breaks germs apart<br><br>
+            <strong style="color:var(--green)">Vaccination</strong> — trains your immune system<br><br>
+            <strong style="color:var(--green)">Cooking food</strong> — heat kills bacteria
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 2: BARRIERS ========== -->
+    <div class="slide slide-content" data-topic="Infections">
+      <div class="slide-subheading">Infections</div>
+      <div class="slide-heading">Your Body's Three Walls</div>
+      <p>Before germs even reach your cells, your body has <span class="highlight">anatomical barriers</span> — built-in defences that work automatically.</p>
+      <div class="three-cards" style="margin-top:16px;">
+        <div class="info-card">
+          <div class="icon-circle">&#129529;</div>
+          <h3>Skin</h3>
+          <p>Your largest organ. Like armour — as long as it's not broken, most germs can't pass through.</p>
+        </div>
+        <div class="info-card teal-card">
+          <div class="icon-circle teal">&#129531;</div>
+          <h3>Mucous Membranes</h3>
+          <p>Sticky mucus in your nose and throat traps germs — like flypaper catching flies.</p>
+        </div>
+        <div class="info-card rose-card">
+          <div class="icon-circle rose">&#129514;</div>
+          <h3>Stomach Acid</h3>
+          <p>A pool of powerful acid (pH ~2) that dissolves most bacteria you accidentally swallow.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 3: MACROPHAGES ========== -->
+    <div class="slide slide-content" data-topic="Immune Response">
+      <div class="slide-subheading">Immune Response</div>
+      <div class="slide-heading">Macrophages — The First Responders</div>
+      <p>When germs slip past the barriers, <span class="term">macrophages</span> are first on the scene. They patrol your body like security guards — and they eat germs alive.</p>
+      <div class="info-card" style="margin-top:16px;">
+        <h3>Phagocytosis (How macrophages eat germs)</h3>
+        <div class="flow-steps" style="margin-top:12px;">
+          <div class="flow-step"><div class="flow-num">1</div><div>Macrophage <strong>detects</strong> a bacterium nearby</div></div>
+          <div class="flow-step"><div class="flow-num">2</div><div>Stretches its membrane and <strong>surrounds</strong> the bacterium</div></div>
+          <div class="flow-step"><div class="flow-num">3</div><div><strong>Pulls it inside</strong> into a bubble (vesicle)</div></div>
+          <div class="flow-step"><div class="flow-num">4</div><div>Enzymes <strong>digest and destroy</strong> the bacterium</div></div>
+          <div class="flow-step"><div class="flow-num">5</div><div><strong>Displays antigen</strong> on its surface — a "wanted poster" for other immune cells</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 4: IMMUNE CELLS ========== -->
+    <div class="slide slide-content" data-topic="Immune Response">
+      <div class="slide-subheading">Immune Response</div>
+      <div class="slide-heading">Your Immune Cell Team</div>
+      <p>Each cell type has a unique role — like positions on a football team.</p>
+      <div class="two-col" style="margin-top:14px;">
+        <div class="info-card">
+          <h3>T-Helper Cells — The Commanders</h3>
+          <p>Read the antigen on the macrophage and <strong>send alarm signals</strong> to activate the rest of the immune system. They coordinate, not fight.</p>
+        </div>
+        <div class="info-card teal-card">
+          <h3>T-Killer Cells — The Destroyers</h3>
+          <p>Find body cells already <strong>infected by a virus</strong> and punch holes in them to destroy the virus factory.</p>
+        </div>
+        <div class="info-card">
+          <h3>Plasma Cells — Weapon Factories</h3>
+          <p>Produce <span class="term">antibodies</span> — Y-shaped proteins that stick to germs like labels saying "DESTROY ME."</p>
+        </div>
+        <div class="info-card rose-card">
+          <h3>Memory Cells — Record Keepers</h3>
+          <p>Stay in your body for <strong>years</strong>. If the same germ returns, they trigger a lightning-fast response. That's why you only get chickenpox once.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 5: SPECIFIC IMMUNE RESPONSE DIAGRAM ========== -->
+    <div class="slide slide-content" data-topic="Immune Response">
+      <div class="slide-subheading">Immune Response</div>
+      <div class="slide-heading">The Specific Immune Response</div>
+      <div class="visual-box">
+        <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f0a500" stop-opacity="0.25"/><stop offset="100%" stop-color="#e8751a" stop-opacity="0.15"/></linearGradient>
+            <linearGradient id="gt" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4fc3f7" stop-opacity="0.2"/><stop offset="100%" stop-color="#26c6da" stop-opacity="0.1"/></linearGradient>
+            <marker id="ag" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f0a500" opacity="0.7"/></marker>
+          </defs>
+          <rect x="10" y="15" width="130" height="55" rx="12" fill="url(#gg)" stroke="#f0a500" stroke-opacity="0.4"/>
+          <text x="75" y="38" text-anchor="middle" fill="#ffd966" font-size="10.5" font-weight="700" font-family="Quicksand">Germ enters</text>
+          <text x="75" y="53" text-anchor="middle" fill="#e8dff0" font-size="9" font-family="Quicksand">Past barriers</text>
+          <line x1="140" y1="42" x2="175" y2="42" stroke="#f0a500" stroke-width="1.5" marker-end="url(#ag)"/>
+          <rect x="175" y="15" width="145" height="55" rx="12" fill="url(#gg)" stroke="#f0a500" stroke-opacity="0.4"/>
+          <text x="247" y="36" text-anchor="middle" fill="#ffd966" font-size="10.5" font-weight="700" font-family="Quicksand">Macrophage eats</text>
+          <text x="247" y="51" text-anchor="middle" fill="#e8dff0" font-size="9" font-family="Quicksand">Shows antigen</text>
+          <line x1="320" y1="42" x2="355" y2="42" stroke="#f0a500" stroke-width="1.5" marker-end="url(#ag)"/>
+          <rect x="355" y="15" width="155" height="55" rx="12" fill="url(#gg)" stroke="#f0a500" stroke-opacity="0.4"/>
+          <text x="432" y="36" text-anchor="middle" fill="#ffd966" font-size="10.5" font-weight="700" font-family="Quicksand">T-Helper activates</text>
+          <text x="432" y="51" text-anchor="middle" fill="#e8dff0" font-size="9" font-family="Quicksand">Sends alarm signals</text>
+          <!-- branches -->
+          <line x1="432" y1="70" x2="432" y2="95" stroke="#f0a500" stroke-width="1.5" marker-end="url(#ag)"/>
+          <line x1="432" y1="95" x2="200" y2="95" stroke="#f0a500" stroke-width="1" stroke-dasharray="4" opacity="0.4"/>
+          <line x1="432" y1="95" x2="570" y2="95" stroke="#f0a500" stroke-width="1" stroke-dasharray="4" opacity="0.4"/>
+          <line x1="200" y1="95" x2="200" y2="110" stroke="#f0a500" stroke-width="1.5" marker-end="url(#ag)" opacity="0.6"/>
+          <line x1="570" y1="95" x2="570" y2="110" stroke="#f0a500" stroke-width="1.5" marker-end="url(#ag)" opacity="0.6"/>
+          <rect x="120" y="110" width="160" height="55" rx="12" fill="url(#gt)" stroke="#4fc3f7" stroke-opacity="0.4"/>
+          <text x="200" y="133" text-anchor="middle" fill="#4fc3f7" font-size="10.5" font-weight="700" font-family="Quicksand">T-Killer Cells</text>
+          <text x="200" y="148" text-anchor="middle" fill="#e8dff0" font-size="9" font-family="Quicksand">Destroy infected cells</text>
+          <rect x="490" y="110" width="160" height="55" rx="12" fill="url(#gt)" stroke="#4fc3f7" stroke-opacity="0.4"/>
+          <text x="570" y="133" text-anchor="middle" fill="#4fc3f7" font-size="10.5" font-weight="700" font-family="Quicksand">Plasma Cells</text>
+          <text x="570" y="148" text-anchor="middle" fill="#e8dff0" font-size="9" font-family="Quicksand">Produce antibodies</text>
+          <!-- converge -->
+          <line x1="200" y1="165" x2="350" y2="205" stroke="#f0a500" stroke-width="1.5" marker-end="url(#ag)" opacity="0.5"/>
+          <line x1="570" y1="165" x2="420" y2="205" stroke="#f0a500" stroke-width="1.5" marker-end="url(#ag)" opacity="0.5"/>
+          <rect x="300" y="205" width="190" height="55" rx="12" fill="url(#gg)" stroke="#f0a500" stroke-opacity="0.5"/>
+          <text x="395" y="228" text-anchor="middle" fill="#ffd966" font-size="10.5" font-weight="700" font-family="Quicksand">Infection defeated</text>
+          <text x="395" y="245" text-anchor="middle" fill="#e8dff0" font-size="9" font-family="Quicksand">Memory cells remain</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 6: VACCINATIONS INTRO ========== -->
+    <div class="slide slide-content" data-topic="Vaccinations">
+      <div class="slide-subheading">Vaccinations</div>
+      <div class="slide-heading">Active vs. Passive Immunisation</div>
+      <div class="two-col">
+        <div class="info-card">
+          <h3>Active Immunisation</h3>
+          <p>You receive a <strong>weakened or dead germ</strong>. Your body fights it, builds antibodies, and creates <span class="term">memory cells</span>.</p>
+          <p style="margin-top:10px;"><strong>Example:</strong> The <span class="highlight">MMR vaccine</span> — given around age 1. Protects for life.</p>
+          <p style="margin-top:8px; font-size:0.88em; color:var(--hex-teal);">Slow to work (days) but long-lasting.</p>
+        </div>
+        <div class="info-card teal-card">
+          <h3>Passive Immunisation</h3>
+          <p>You receive <strong>ready-made antibodies</strong> from another source. Works immediately but your body doesn't learn — no memory cells.</p>
+          <p style="margin-top:10px;"><strong>Example:</strong> <span class="highlight">Snake antivenom</span> — pre-made antibodies injected after a bite.</p>
+          <p style="margin-top:8px; font-size:0.88em; color:var(--rose);">Fast but temporary.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 7: VACCINATION COMPARISON ========== -->
+    <div class="slide slide-content" data-topic="Vaccinations">
+      <div class="slide-subheading">Vaccinations</div>
+      <div class="slide-heading">Comparison at a Glance</div>
+      <div class="visual-box" style="text-align:left;">
+        <table class="comp-table">
+          <tr><th></th><th style="color:var(--hex-teal);">Active</th><th style="color:var(--rose);">Passive</th></tr>
+          <tr><td>What's given</td><td>Weakened / dead germ</td><td>Ready-made antibodies</td></tr>
+          <tr><td>Memory cells?</td><td class="green-text">Yes</td><td class="rose-text">No</td></tr>
+          <tr><td>How fast?</td><td>Slow (days to weeks)</td><td>Immediate</td></tr>
+          <tr><td>How long?</td><td>Years or lifelong</td><td>Short-term only</td></tr>
+          <tr><td>Example</td><td>MMR vaccine</td><td>Snake antivenom</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 8: VAX PROS/CONS ========== -->
+    <div class="slide slide-content" data-topic="Vaccinations">
+      <div class="slide-subheading">Vaccinations</div>
+      <div class="slide-heading">Advantages &amp; Disadvantages</div>
+      <div class="two-col">
+        <div class="info-card" style="border-left:3px solid var(--green);">
+          <h3 style="color:var(--green);">Advantages</h3>
+          <ol>
+            <li>Prevents deadly diseases — smallpox was wiped out entirely by vaccines</li>
+            <li>Herd immunity protects babies and people with weak immune systems</li>
+            <li>Cheaper than treating the disease — fewer hospital stays</li>
+          </ol>
+        </div>
+        <div class="info-card" style="border-left:3px solid var(--rose);">
+          <h3>Disadvantages</h3>
+          <ol>
+            <li>Mild side effects are common (sore arm, low fever for a day)</li>
+            <li>Multiple doses or boosters may be needed</li>
+            <li>Rare allergic reactions can occur in some people</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 9: ALLERGIES INTRO ========== -->
+    <div class="slide slide-content" data-topic="Allergies">
+      <div class="slide-subheading">Allergies</div>
+      <div class="slide-heading">What Is an Allergen?</div>
+      <p>An <span class="term">allergen</span> is a normally <strong>harmless</strong> substance that your immune system mistakenly treats as dangerous.</p>
+      <div class="three-cards" style="margin-top:20px;">
+        <div class="info-card" style="text-align:center;">
+          <div style="font-size:2.2em;margin-bottom:8px;">&#127804;</div>
+          <h3>Pollen</h3>
+          <p>From flowers, grass, and trees. Causes hay fever in spring.</p>
+        </div>
+        <div class="info-card teal-card" style="text-align:center;">
+          <div style="font-size:2.2em;margin-bottom:8px;">&#129372;</div>
+          <h3>Peanuts</h3>
+          <p>A food allergen that can cause severe reactions in some people.</p>
+        </div>
+        <div class="info-card rose-card" style="text-align:center;">
+          <div style="font-size:2.2em;margin-bottom:8px;">&#128027;</div>
+          <h3>Dust Mites</h3>
+          <p>Tiny creatures in pillows and carpets. Can trigger sneezing and asthma.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 10: ALLERGIC REACTION ========== -->
+    <div class="slide slide-content" data-topic="Allergies">
+      <div class="slide-subheading">Allergies</div>
+      <div class="slide-heading">What Happens During an Allergic Reaction?</div>
+      <div class="flow-steps">
+        <div class="flow-step"><div class="flow-num">1</div><div><strong>First exposure:</strong> Body meets allergen (e.g., pollen). <span class="term">Plasma cells</span> produce special IgE antibodies.</div></div>
+        <div class="flow-step teal-step"><div class="flow-num">2</div><div>Antibodies attach to <span class="term">mast cells</span> (in skin, nose, lungs) and <strong>wait</strong>.</div></div>
+        <div class="flow-step"><div class="flow-num">3</div><div><strong>Second exposure:</strong> Allergen returns and binds to the antibodies on mast cells.</div></div>
+        <div class="flow-step teal-step"><div class="flow-num">4</div><div>Mast cells <strong>burst open</strong> and release <span class="term">histamine</span>.</div></div>
+        <div class="flow-step"><div class="flow-num">5</div><div>Histamine causes symptoms: sneezing, swelling, itchy eyes, rash, difficulty breathing.</div></div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 11: ALLERGY TREATMENT ========== -->
+    <div class="slide slide-content" data-topic="Allergies">
+      <div class="slide-subheading">Allergies</div>
+      <div class="slide-heading">Treating Allergies</div>
+      <div class="two-col">
+        <div class="info-card">
+          <h3>Antihistamines</h3>
+          <p>Medicines that <strong>block histamine</strong> from causing symptoms.</p>
+          <p style="margin-top:10px; color:var(--hex-teal); font-size:0.9em;">Example: Taking a tablet before pollen season to stop sneezing and itchy eyes.</p>
+        </div>
+        <div class="info-card teal-card">
+          <h3>Desensitisation (Allergy Shots)</h3>
+          <p>Small, <strong>increasing doses</strong> of the allergen are injected over months or years.</p>
+          <p style="margin-top:10px; color:var(--gold-light); font-size:0.9em;">Trains the immune system to stop overreacting. Takes time but can provide lasting relief.</p>
+        </div>
+      </div>
+      <div class="info-card rose-card" style="margin-top:16px;">
+        <h3>Key Point</h3>
+        <p>The <strong>first</strong> time you meet an allergen, you usually don't react. The <strong>second</strong> time is when your body overreacts — because antibodies are already waiting on the mast cells.</p>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 12: HABITATS DEFINITIONS ========== -->
+    <div class="slide slide-content" data-topic="Habitats">
+      <div class="slide-subheading">Topic 4 &bull; Basic Ecology</div>
+      <div class="slide-heading">Habitats &amp; Key Definitions</div>
+      <div class="flow-steps">
+        <div class="flow-step"><div class="flow-num" style="font-size:0.65em;">&#127758;</div><div><span class="term">Habitat</span> — The specific place where an organism lives (a pond, a tree canopy, under a rock).</div></div>
+        <div class="flow-step teal-step"><div class="flow-num" style="font-size:0.65em;">&#127795;</div><div><span class="term">Ecosystem</span> — A habitat + all living things + non-living things (water, soil, temperature) interacting together.</div></div>
+        <div class="flow-step"><div class="flow-num" style="font-size:0.65em;">&#127760;</div><div><span class="term">Biosphere</span> — All ecosystems on Earth combined. Every living thing and its environment.</div></div>
+        <div class="flow-step teal-step"><div class="flow-num" style="font-size:0.65em;">&#128270;</div><div><span class="term">Ecology</span> — The science of studying how living things interact with each other and their environment.</div></div>
+        <div class="flow-step"><div class="flow-num" style="font-size:0.65em;">&#9889;</div><div><span class="term">Adaptation</span> — A feature (body part, behaviour, or process) that helps an organism survive in its habitat.</div></div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 13: ADAPTATIONS EXAMPLES ========== -->
+    <div class="slide slide-content" data-topic="Habitats">
+      <div class="slide-subheading">Habitats</div>
+      <div class="slide-heading">How Animals Adapt</div>
+      <div class="three-cards">
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle">&#129451;</div>
+            <strong>Structural</strong>
+            <div class="tap-hint">tap to reveal</div>
+          </div>
+          <div class="reveal-back">
+            <strong style="color:var(--gold)">Polar bears</strong> have thick white fur for camouflage and a fat layer (blubber) for insulation in Arctic cold.
+          </div>
+        </div>
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle teal">&#129418;</div>
+            <strong>Behavioural</strong>
+            <div class="tap-hint">tap to reveal</div>
+          </div>
+          <div class="reveal-back">
+            <strong style="color:var(--hex-teal)">Arctic foxes</strong> curl into a tight ball and wrap their bushy tail over their nose when sleeping to conserve heat.
+          </div>
+        </div>
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle rose">&#128043;</div>
+            <strong>Physiological</strong>
+            <div class="tap-hint">tap to reveal</div>
+          </div>
+          <div class="reveal-back">
+            <strong style="color:var(--rose)">Camels</strong> drink up to 100L in 10 minutes and store fat in their hump to survive days without water in the desert.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 14: DAILY & SEASONAL CHANGES ========== -->
+    <div class="slide slide-content" data-topic="Habitats">
+      <div class="slide-subheading">Habitats</div>
+      <div class="slide-heading">Daily &amp; Seasonal Changes</div>
+      <div class="two-col">
+        <div class="info-card">
+          <h3>Daily Change</h3>
+          <p>Temperature drops at night.</p>
+          <p style="margin-top:10px;"><strong>Adaptation:</strong> <span class="highlight">Owls</span> have huge eyes to see in low light. They hunt at night when mice are active — avoiding competition with daytime hunters.</p>
+        </div>
+        <div class="info-card teal-card">
+          <h3>Seasonal Change</h3>
+          <p>In winter, food becomes scarce and temperatures plummet.</p>
+          <p style="margin-top:10px;"><strong>Adaptation:</strong> <span class="highlight">Hedgehogs</span> hibernate — slowing heart rate and body temperature to save energy until spring returns.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 15: FOOD WEB DEFINITIONS ========== -->
+    <div class="slide slide-content" data-topic="Food Webs">
+      <div class="slide-subheading">Food Webs</div>
+      <div class="slide-heading">Key Definitions</div>
+      <div class="two-col">
+        <div>
+          <div class="flow-steps">
+            <div class="flow-step"><div class="flow-num" style="font-size:0.65em;">&#128101;</div><div><span class="term">Population</span> — All individuals of one species in the same area</div></div>
+            <div class="flow-step teal-step"><div class="flow-num" style="font-size:0.65em;">&#127793;</div><div><span class="term">Producer</span> — Makes its own food via photosynthesis (grass, trees, algae)</div></div>
+            <div class="flow-step"><div class="flow-num" style="font-size:0.65em;">&#128007;</div><div><span class="term">Consumer</span> — Eats other organisms (rabbit eats grass, hawk eats rabbit)</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="flow-steps">
+            <div class="flow-step"><div class="flow-num" style="font-size:0.65em;">&#127812;</div><div><span class="term">Decomposer</span> — Breaks down dead matter, recycles nutrients (fungi, earthworms)</div></div>
+            <div class="flow-step teal-step"><div class="flow-num" style="font-size:0.65em;">&#128279;</div><div><span class="term">Food chain</span> — Single pathway: Grass &rarr; Rabbit &rarr; Fox</div></div>
+            <div class="flow-step"><div class="flow-num" style="font-size:0.65em;">&#128752;</div><div><span class="term">Food web</span> — Many food chains linked together in a network</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 16: REMOVING A SPECIES ========== -->
+    <div class="slide slide-content" data-topic="Food Webs">
+      <div class="slide-subheading">Food Webs</div>
+      <div class="slide-heading">What If a Species Disappears?</div>
+      <div class="info-card" style="margin-bottom:18px;">
+        <h3>Example: All Frogs Disappear from a Pond</h3>
+        <div class="two-col" style="margin-top:14px;">
+          <div>
+            <p style="color:var(--rose);font-weight:600;margin-bottom:6px;">Insects (frog prey) &uarr;</p>
+            <p>With no frogs eating them, insect populations <strong>explode</strong>. They damage crops and plants nearby.</p>
+          </div>
+          <div>
+            <p style="color:var(--hex-teal);font-weight:600;margin-bottom:6px;">Herons (frog predator) &darr;</p>
+            <p>Herons lose a major food source. Their population <strong>declines</strong> or they move elsewhere.</p>
+          </div>
+        </div>
+        <p style="margin-top:14px; font-size:0.9em; color:var(--gold-light);">Removing one species causes a chain reaction through the whole web.</p>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 17: INVASIVE SPECIES ========== -->
+    <div class="slide slide-content" data-topic="Food Webs">
+      <div class="slide-subheading">Food Webs</div>
+      <div class="slide-heading">Invasive Species</div>
+      <p>An <span class="term">invasive species</span> is a non-native organism introduced to an ecosystem where it has <strong>no natural predators</strong>.</p>
+      <div class="info-card rose-card" style="margin-top:16px;">
+        <h3>Real Example: Cane Toads in Australia</h3>
+        <p>Introduced in 1935 to eat beetles on sugar cane farms. With no predators, their population <strong>exploded</strong>. They produce poison that kills animals trying to eat them, and they outcompete native frogs for food and space.</p>
+      </div>
+      <div class="info-card" style="margin-top:14px;">
+        <h3>Three Ways Humans Harm Ecosystems</h3>
+        <ol>
+          <li><strong>Deforestation</strong> — Clearing rainforests for palm oil destroys orangutan habitats</li>
+          <li><strong>Pollution</strong> — Plastic in oceans is eaten by sea turtles who mistake it for jellyfish</li>
+          <li><strong>Overfishing</strong> — Taking cod faster than they reproduce crashes marine food webs</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 18: ENERGY — CONSUMER LEVELS ========== -->
+    <div class="slide slide-content" data-topic="Energy Flow">
+      <div class="slide-subheading">Energy Flow</div>
+      <div class="slide-heading">Consumer Levels</div>
+      <div class="three-cards">
+        <div class="info-card" style="text-align:center;">
+          <div style="font-size:2em;margin-bottom:8px;">&#129431;</div>
+          <h3>Primary Consumer</h3>
+          <p>Eats <strong>producers</strong></p>
+          <p style="color:var(--hex-teal);margin-top:6px;">Grasshopper eats grass</p>
+        </div>
+        <div class="info-card teal-card" style="text-align:center;">
+          <div style="font-size:2em;margin-bottom:8px;">&#128056;</div>
+          <h3>Secondary Consumer</h3>
+          <p>Eats <strong>primary consumers</strong></p>
+          <p style="color:var(--gold);margin-top:6px;">Frog eats grasshopper</p>
+        </div>
+        <div class="info-card rose-card" style="text-align:center;">
+          <div style="font-size:2em;margin-bottom:8px;">&#129413;</div>
+          <h3>Tertiary Consumer</h3>
+          <p>Eats <strong>secondary consumers</strong></p>
+          <p style="color:var(--green);margin-top:6px;">Hawk eats frog</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 19: ENERGY PYRAMID ========== -->
+    <div class="slide slide-content" data-topic="Energy Flow">
+      <div class="slide-subheading">Energy Flow</div>
+      <div class="slide-heading">The Energy Pyramid</div>
+      <p>At every level, about <span class="highlight">90% of energy is lost</span> as heat. Only ~10% passes up.</p>
+      <div class="visual-box" style="margin-top:16px; padding:28px 16px;">
+        <div class="pyramid-row">
+          <div class="pyr-label">100 kJ</div>
+          <div class="pyr-bar" style="width:60px; background:linear-gradient(135deg,#e84393,#d63031); color:white;">Hawk</div>
+        </div>
+        <div class="pyramid-row">
+          <div class="pyr-label">1,000 kJ</div>
+          <div class="pyr-bar" style="width:140px; background:linear-gradient(135deg,#f0a500,#e8751a);">Frog</div>
+        </div>
+        <div class="pyramid-row">
+          <div class="pyr-label">10,000 kJ</div>
+          <div class="pyr-bar" style="width:260px; background:linear-gradient(135deg,#26c6da,#4fc3f7);">Grasshopper</div>
+        </div>
+        <div class="pyramid-row">
+          <div class="pyr-label">100,000 kJ</div>
+          <div class="pyr-bar" style="width:400px; background:linear-gradient(135deg,#00e676,#69f0ae);">Grass</div>
+        </div>
+        <p style="margin-top:14px; font-size:0.85em; color:var(--text-dim);">Each level passes only ~10% of its energy upward</p>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 20: ENERGY CALCULATION ========== -->
+    <div class="slide slide-content" data-topic="Energy Flow">
+      <div class="slide-subheading">Energy Flow</div>
+      <div class="slide-heading">Calculating Energy Flow</div>
+      <div class="info-card">
+        <h3>Worked Example</h3>
+        <p>A field of grass captures <strong>100,000 kJ</strong> from the sun.</p>
+        <div class="flow-steps" style="margin-top:14px;">
+          <div class="flow-step"><div class="flow-num">1</div><div>Grasshoppers (primary) get 10% &rarr; <strong style="color:var(--hex-teal);">10,000 kJ</strong></div></div>
+          <div class="flow-step teal-step"><div class="flow-num">2</div><div>Frogs (secondary) get 10% of that &rarr; <strong style="color:var(--gold);">1,000 kJ</strong></div></div>
+          <div class="flow-step"><div class="flow-num">3</div><div>Hawks (tertiary) get 10% of that &rarr; <strong style="color:var(--rose);">100 kJ</strong></div></div>
+        </div>
+      </div>
+      <div class="info-card teal-card" style="margin-top:16px;">
+        <h3>Formula</h3>
+        <p style="font-size:1.1em; text-align:center; padding:10px 0;">
+          <strong>Energy at next level = Current level &times; 0.10</strong>
+        </p>
+      </div>
+      <div class="info-card" style="margin-top:16px;">
+        <h3>Biomass Also Decreases</h3>
+        <p><span class="term">Biomass</span> = total mass of living organisms at each level. There's far more grass (by mass) than hawks. That's why top predators are rare — not enough energy to support many of them.</p>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 21: RECAP — IMMUNE ========== -->
+    <div class="slide slide-content" data-topic="Recap">
+      <div class="slide-subheading">Recap</div>
+      <div class="slide-heading">Immune System — Quick Review</div>
+      <div class="three-cards">
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle">&#129529;</div>
+            <strong>Barriers</strong>
+            <div class="tap-hint">tap to check</div>
+          </div>
+          <div class="reveal-back">
+            Skin (armour), mucous membranes (sticky trap), stomach acid (dissolves germs)
+          </div>
+        </div>
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle teal">&#128170;</div>
+            <strong>Immune Cells</strong>
+            <div class="tap-hint">tap to check</div>
+          </div>
+          <div class="reveal-back">
+            Macrophages eat germs. T-Helpers coordinate. T-Killers destroy infected cells. Plasma cells make antibodies. Memory cells remember.
+          </div>
+        </div>
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle rose">&#128137;</div>
+            <strong>Vaccines</strong>
+            <div class="tap-hint">tap to check</div>
+          </div>
+          <div class="reveal-back">
+            Active = weakened germ, long-lasting (MMR). Passive = ready-made antibodies, fast but temporary (antivenom).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 22: RECAP — ECOLOGY ========== -->
+    <div class="slide slide-content" data-topic="Recap">
+      <div class="slide-subheading">Recap</div>
+      <div class="slide-heading">Ecology — Quick Review</div>
+      <div class="three-cards">
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle green">&#127795;</div>
+            <strong>Habitats</strong>
+            <div class="tap-hint">tap to check</div>
+          </div>
+          <div class="reveal-back">
+            Habitat (where), Ecosystem (habitat + life + non-living), Biosphere (all ecosystems). Adaptations: structural, behavioural, physiological.
+          </div>
+        </div>
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle">&#128279;</div>
+            <strong>Food Webs</strong>
+            <div class="tap-hint">tap to check</div>
+          </div>
+          <div class="reveal-back">
+            Producer &rarr; Primary &rarr; Secondary &rarr; Tertiary consumer. Decomposers recycle. Remove one species = chain reaction through the web.
+          </div>
+        </div>
+        <div class="reveal-card" onclick="this.classList.toggle('flipped')">
+          <div class="reveal-front">
+            <div class="icon-circle teal">&#9889;</div>
+            <strong>Energy</strong>
+            <div class="tap-hint">tap to check</div>
+          </div>
+          <div class="reveal-back">
+            Only 10% of energy passes up each level. 90% lost as heat. Formula: next level = current &times; 0.10. Biomass also decreases upward.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SLIDE 23: END ========== -->
+    <div class="slide slide-title-page" data-topic="Finish">
+      <h1>You're Ready, Elia</h1>
+      <div class="divider"></div>
+      <div class="tagline">Good luck on the exam — you've got this.</div>
+      <p style="margin-top:30px; font-size:0.9em; color:var(--text-dim);">Use &larr; to revisit any slide. Tap the cards to test yourself.</p>
+    </div>
+
+  </div><!-- /slide-area -->
+
+  <!-- Bottom nav -->
+  <div class="bottom-bar">
+    <div class="nav-arrow" id="prevBtn" onclick="changeSlide(-1)">&#8592;</div>
+    <div class="slide-dots" id="dotContainer"></div>
+    <div class="nav-arrow" id="nextBtn" onclick="changeSlide(1)">&#8594;</div>
+  </div>
+</div>
+
+<div class="key-hint">&#8592; &#8594; arrow keys &bull; swipe</div>
+
+<script>
+// Particles
+(function(){
+  const s=document.getElementById('sparks');
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');p.className='spark';
+    p.style.left=Math.random()*100+'%';
+    p.style.animationDuration=(7+Math.random()*12)+'s';
+    p.style.animationDelay=Math.random()*12+'s';
+    p.style.width=p.style.height=(1.5+Math.random()*2.5)+'px';
+    s.appendChild(p);
+  }
+})();
+
+// Slide engine
+const slides=document.querySelectorAll('.slide');
+const totalSlides=slides.length;
+let current=0;
+let direction=1;
+
+// Build dots
+const dotC=document.getElementById('dotContainer');
+for(let i=0;i<totalSlides;i++){
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' active visited':'');
+  d.onclick=()=>goToSlide(i);
+  dotC.appendChild(d);
+}
+const dots=dotC.querySelectorAll('.dot');
+
+function goToSlide(n){
+  if(n<0||n>=totalSlides||n===current) return;
+  direction=n>current?1:-1;
+  slides[current].classList.remove('active');
+  current=n;
+  const sl=slides[current];
+  sl.classList.add('active');
+  sl.style.animation='none'; sl.offsetHeight;
+  sl.style.animation=direction>0?'slideFade 0.45s ease':'slideFadeBack 0.45s ease';
+  updateUI();
+}
+
+function changeSlide(dir){
+  goToSlide(current+dir);
+}
+
+function updateUI(){
+  dots.forEach((d,i)=>{
+    d.classList.toggle('active',i===current);
+    if(i<=current) d.classList.add('visited');
+  });
+  document.getElementById('slideCounter').textContent=`${current+1} / ${totalSlides}`;
+  document.getElementById('progFill').style.width=((current+1)/totalSlides*100)+'%';
+  document.getElementById('prevBtn').classList.toggle('disabled',current===0);
+  document.getElementById('nextBtn').classList.toggle('disabled',current===totalSlides-1);
+  const topic=slides[current].getAttribute('data-topic')||'';
+  document.getElementById('topicBadge').textContent=topic;
+}
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ') changeSlide(1);
+  else if(e.key==='ArrowLeft') changeSlide(-1);
+});
+
+// Touch / swipe
+let touchX=0;
+document.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-touchX;
+  if(Math.abs(dx)>50){
+    if(dx<0) changeSlide(1); else changeSlide(-1);
+  }
+},{passive:true});
+
+updateUI();
+</script>
+</body>
+</html>
