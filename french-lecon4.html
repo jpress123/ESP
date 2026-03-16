@@ -9,7 +9,8 @@
 :root{--p50:#fdf2f8;--p100:#fce7f3;--p200:#fbcfe8;--p300:#f9a8d4;--p400:#f472b6;--p500:#ec4899;--p600:#db2777;--p700:#be185d;--p800:#9d174d;--p900:#831843}
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,var(--p50),var(--p100));min-height:100vh;color:#1f2937;line-height:1.5}
 nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:12px 8px;background:#fff;border-bottom:3px solid var(--p300);position:sticky;top:0;z-index:10}
-nav button{padding:7px 13px;border-radius:20px;border:none;cursor:pointer;font-size:13px;font-weight:500;background:var(--p100);color:var(--p700);transition:all .2s;white-space:nowrap}
+nav button,nav a{padding:7px 13px;border-radius:20px;border:none;cursor:pointer;font-size:13px;font-weight:500;background:var(--p100);color:var(--p700);transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-block}
+nav a.home-link{background:var(--p700);color:#fff;font-weight:700}
 nav button.active{font-weight:700;background:var(--p500);color:#fff}
 .wrap{padding:8px 12px 60px;max-width:720px;margin:0 auto}
 .card{background:#fff;border-radius:16px;padding:20px;margin:14px 0;box-shadow:0 4px 20px var(--p200)}
@@ -110,7 +111,7 @@ function nav(page){currentPage=page;render()}
 
 function render(){
   const navEl=document.getElementById("nav");
-  navEl.innerHTML=sections.map(s=>`<button class="${s.id===currentPage?"active":""}" onclick="nav('${s.id}')">${s.label}</button>`).join("");
+  navEl.innerHTML=`<a class="home-link" href="index.html">&#9664; Atomic Salon</a>`+sections.map(s=>`<button class="${s.id===currentPage?"active":""}" onclick="nav('${s.id}')">${s.label}</button>`).join("");
   const app=document.getElementById("app");
   switch(currentPage){
     case"home":app.innerHTML=renderHome();break;
