@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nachrichtenredaktion — Report Writer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #fef0f5;
+            --surface: #ffffff;
+            --gold: #d4849b;
+            --gold-light: #f2b5c8;
+            --teal: #b8a9c9;
+            --rose: #e74c7a;
+            --text: #3d2b3d;
+            --text-dim: #8b7088;
+            --accent: #f7c5d5;
+            --glass: rgba(255, 255, 255, 0.7);
+            --shine: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 50%, #fce4ec 100%);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fef0f5 0%, #fce4ec 30%, #f3e5f5 60%, #fef0f5 100%);
+            color: var(--text);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Floating particles animation */
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) translateX(100px);
+            }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--gold-light);
+            border-radius: 50%;
+            opacity: 0.4;
+            box-shadow: 0 0 8px rgba(212, 132, 155, 0.6);
+        }
+
+        .particle:nth-child(1) { animation: floatUp 8s ease-in infinite; left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { animation: floatUp 10s ease-in infinite; left: 20%; animation-delay: 2s; }
+        .particle:nth-child(3) { animation: floatUp 12s ease-in infinite; left: 30%; animation-delay: 4s; }
+        .particle:nth-child(4) { animation: floatUp 9s ease-in infinite; left: 40%; animation-delay: 1s; }
+        .particle:nth-child(5) { animation: floatUp 11s ease-in infinite; left: 50%; animation-delay: 3s; }
+        .particle:nth-child(6) { animation: floatUp 10s ease-in infinite; left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { animation: floatUp 13s ease-in infinite; left: 70%; animation-delay: 2s; }
+        .particle:nth-child(8) { animation: floatUp 9s ease-in infinite; left: 80%; animation-delay: 4s; }
+        .particle:nth-child(9) { animation: floatUp 11s ease-in infinite; left: 90%; animation-delay: 1s; }
+        .particle:nth-child(10) { animation: floatUp 12s ease-in infinite; left: 15%; animation-delay: 6s; }
+
+        /* Organic blob shapes */
+        @keyframes blobMove1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        @keyframes blobMove2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-40px, 30px) scale(0.95); }
+            66% { transform: translate(20px, -20px) scale(1.05); }
+        }
+
+        .blob {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .blob1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at 30% 30%, #f8bbd0, #e1bee7);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            top: -100px;
+            left: -100px;
+            animation: blobMove1 20s ease-in-out infinite;
+        }
+
+        .blob2 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle at 70% 70%, #f8bbd0, #e1bee7);
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            bottom: -50px;
+            right: -50px;
+            animation: blobMove2 25s ease-in-out infinite;
+        }
+
+        .blob3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at 50% 50%, #f8bbd0, #e1bee7);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            top: 50%;
+            right: 10%;
+            animation: blobMove1 22s ease-in-out infinite;
+            animation-direction: reverse;
+        }
+
+        /* Main container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Screen visibility */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Heading styles */
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--rose);
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(231, 76, 122, 0.15);
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8em;
+            font-weight: 600;
+            color: var(--rose);
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(231, 76, 122, 0.1);
+        }
+
+        h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+
+        /* Glass morphism cards */
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 132, 155, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(212, 132, 155, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(212, 132, 155, 0.5);
+            box-shadow: 0 4px 20px rgba(212, 132, 155, 0.25);
+        }
+
+        .intro-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+
+        .description {
+            color: var(--text-dim);
+            font-size: 0.95em;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        /* Buttons */
+        button {
+            font-family: 'Poppins', sans-serif;
+            padding: 15px 35px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            background: linear-gradient(135deg, #d4849b, #e8a0b8);
+            color: #fff;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(212, 132, 155, 0.4);
+            margin: 10px 10px 10px 0;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #c66a82, #e08ab0);
+            box-shadow: 0 6px 20px rgba(212, 132, 155, 0.6);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* Event screen styles */
+        .event-headline {
+            background: rgba(231, 76, 122, 0.08);
+            border-left: 4px solid var(--rose);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .event-headline h2 {
+            color: var(--rose);
+            margin-bottom: 10px;
+        }
+
+        .event-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .detail-item {
+            background: rgba(184, 169, 201, 0.1);
+            border-left: 3px solid var(--teal);
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .detail-label {
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: var(--text);
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        /* Checklist styles */
+        .wfragen-checklist {
+            background: rgba(184, 169, 201, 0.08);
+            border: 2px solid rgba(212, 132, 155, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .wfragen-checklist h3 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.95em;
+        }
+
+        .checklist-item {
+            padding: 10px 0;
+            color: var(--text);
+            font-size: 0.95em;
+            border-bottom: 1px solid rgba(212, 132, 155, 0.15);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-icon {
+            color: var(--gold);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* Textarea */
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: 20px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+            background: #fff;
+            border: 2px solid rgba(212, 132, 155, 0.3);
+            color: var(--text);
+            border-radius: 10px;
+            resize: vertical;
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(212, 132, 155, 0.2);
+            background: #fff;
+        }
+
+        textarea::placeholder {
+            color: var(--text-dim);
+        }
+
+        /* Writing area */
+        .writing-area {
+            margin-bottom: 25px;
+        }
+
+        .writing-area label {
+            display: block;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.95em;
+        }
+
+        .sentence-counter {
+            font-size: 0.85em;
+            color: var(--text-dim);
+            margin-top: 8px;
+        }
+
+        .sentence-counter.error {
+            color: var(--rose);
+        }
+
+        .sentence-counter.success {
+            color: var(--teal);
+        }
+
+        /* Feedback screen */
+        .feedback-section {
+            margin-bottom: 30px;
+        }
+
+        .feedback-title {
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.95em;
+        }
+
+        .wfragen-check {
+            background: rgba(231, 76, 122, 0.08);
+            border: 2px solid rgba(231, 76, 122, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(231, 76, 122, 0.15);
+        }
+
+        .check-item:last-child {
+            border-bottom: none;
+        }
+
+        .check-icon {
+            font-size: 1.3em;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .check-content {
+            flex: 1;
+        }
+
+        .check-question {
+            color: var(--rose);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .check-feedback {
+            color: var(--text-dim);
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        /* Grammar check */
+        .grammar-check {
+            background: rgba(184, 169, 201, 0.08);
+            border: 2px solid rgba(212, 132, 155, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .grammar-item {
+            padding: 10px 0;
+            color: var(--text);
+            font-size: 0.95em;
+            border-bottom: 1px solid rgba(212, 132, 155, 0.15);
+        }
+
+        .grammar-item:last-child {
+            border-bottom: none;
+        }
+
+        .grammar-status {
+            display: inline-block;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .status-good {
+            color: var(--gold);
+        }
+
+        .status-warning {
+            color: #d4849b;
+        }
+
+        .status-error {
+            color: var(--rose);
+        }
+
+        /* Star rating */
+        .star-rating {
+            font-size: 2.5em;
+            margin-top: 10px;
+            letter-spacing: 5px;
+        }
+
+        .star {
+            color: var(--text-dim);
+            transition: color 0.3s ease;
+        }
+
+        .star.filled {
+            color: var(--gold);
+            text-shadow: 0 0 10px var(--gold);
+        }
+
+        /* Model answer */
+        .model-answer {
+            background: #f3e5f5;
+            border: 2px solid rgba(212, 132, 155, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .model-answer h4 {
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .model-text {
+            color: var(--text);
+            font-size: 0.95em;
+            line-height: 1.7;
+            font-style: italic;
+            color: var(--text-dim);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .event-details {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                text-align: center;
+            }
+
+            textarea {
+                min-height: 200px;
+            }
+
+            .blob1, .blob2, .blob3 {
+                opacity: 0.08;
+            }
+        }
+
+        /* Intro screen specific */
+        .intro-content {
+            text-align: center;
+        }
+
+        .intro-content h1 {
+            margin-bottom: 30px;
+        }
+
+        .wfragen-intro {
+            background: rgba(184, 169, 201, 0.08);
+            border-left: 4px solid var(--gold);
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+            border-radius: 8px;
+        }
+
+        .wfragen-intro h3 {
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .wfragen-intro ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .wfragen-intro li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            color: var(--text);
+            font-size: 0.95em;
+        }
+
+        .wfragen-intro li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Blob shapes -->
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+
+    <!-- Main container -->
+    <div class="container">
+        <!-- INTRO SCREEN -->
+        <div id="introScreen" class="screen active">
+            <div class="intro-content">
+                <h1>Nachrichtenredaktion</h1>
+                <p class="intro-text">Schreibe deinen Bericht!</p>
+            </div>
+
+            <div class="card">
+                <p class="description">
+                    Du erhältst ein zufälliges Nachrichtenereignis. Deine Aufgabe ist es, einen kurzen Nachrichtenbericht auf Deutsch zu schreiben. Beantworte dazu die W-Fragen und achte auf korrekte Grammatik!
+                </p>
+
+                <div class="wfragen-intro">
+                    <h3>Die sechs W-Fragen:</h3>
+                    <ul>
+                        <li><strong>Was</strong> ist passiert?</li>
+                        <li><strong>Wann</strong> ist es passiert?</li>
+                        <li><strong>Wo</strong> ist es passiert?</li>
+                        <li><strong>Wer</strong> war beteiligt?</li>
+                        <li><strong>Wie</strong> ist es passiert?</li>
+                        <li><strong>Warum</strong> ist es wichtig?</li>
+                    </ul>
+                </div>
+
+                <p class="description" style="margin-bottom: 5px;">
+                    Schreibe mindestens 4 Sätze! Die App prüft deine Antworten und gibt dir Feedback zu Inhalt und Grammatik.
+                </p>
+
+                <div class="button-group">
+                    <button onclick="startNewEvent()">Neues Ereignis generieren</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVENT SCREEN -->
+        <div id="eventScreen" class="screen">
+            <div class="event-headline">
+                <h2 id="eventHeadline"></h2>
+                <p id="eventDescription" class="description"></p>
+            </div>
+
+            <div class="card">
+                <div class="event-details" id="eventDetails"></div>
+
+                <div class="wfragen-checklist">
+                    <h3>Wichtige Informationen (W-Fragen):</h3>
+                    <div class="checklist-item">
+                        <span class="checklist-icon">❓</span>
+                        <span>Was ist passiert?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="checklist-icon">❓</span>
+                        <span>Wann ist es passiert?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="checklist-icon">❓</span>
+                        <span>Wo ist es passiert?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="checklist-icon">❓</span>
+                        <span>Wer war beteiligt?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="checklist-icon">❓</span>
+                        <span>Wie ist es passiert?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <span class="checklist-icon">❓</span>
+                        <span>Warum ist es wichtig?</span>
+                    </div>
+                </div>
+
+                <div class="writing-area">
+                    <label for="reportTextarea">Schreibe deinen Bericht:</label>
+                    <textarea id="reportTextarea" placeholder="Schreibe hier deine Nachricht auf Deutsch..."></textarea>
+                    <div class="sentence-counter" id="sentenceCounter"></div>
+                </div>
+
+                <div class="button-group">
+                    <button onclick="checkReport()">Bericht einreichen</button>
+                    <button onclick="backToIntro()" style="background: rgba(155, 143, 184, 0.2); border-color: var(--text-dim); color: var(--text-dim);">Zurück</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FEEDBACK SCREEN -->
+        <div id="feedbackScreen" class="screen">
+            <h2 style="color: var(--gold-light); margin-bottom: 30px;">Dein Feedback</h2>
+
+            <div class="card">
+                <!-- Score -->
+                <div class="feedback-section">
+                    <div class="feedback-title">Deine Bewertung:</div>
+                    <div class="star-rating" id="starRating"></div>
+                </div>
+
+                <!-- W-Fragen Check -->
+                <div class="feedback-section">
+                    <div class="feedback-title">Inhalt — W-Fragen Prüfung:</div>
+                    <div class="wfragen-check" id="wfragenFeedback"></div>
+                </div>
+
+                <!-- Grammar Check -->
+                <div class="feedback-section">
+                    <div class="feedback-title">Grammatik-Prüfung:</div>
+                    <div class="grammar-check" id="grammarFeedback"></div>
+                </div>
+
+                <!-- Model Answer -->
+                <div class="feedback-section">
+                    <div class="feedback-title">Beispiel-Antwort:</div>
+                    <div class="model-answer">
+                        <h4>Möglicher Bericht:</h4>
+                        <p class="model-text" id="modelAnswer"></p>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button onclick="startNewEvent()" style="margin-top: 30px;">Nächstes Ereignis</button>
+                    <button onclick="backToIntro()" style="margin-top: 30px; background: rgba(155, 143, 184, 0.2); border-color: var(--text-dim); color: var(--text-dim);">Zum Start</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Events database
+        const events = [
+            {
+                id: 1,
+                headline: "Roboter besiegen Menschen im Fussball",
+                description: "Im Olympiastadion Berlin hat ein sensationelles Fussballspiel stattgefunden. Die Roboter-Team 'TechKick 3000' spielte gegen die deutsche Nationalmannschaft. Das Ergebnis: Die Roboter waren einfach zu schnell und zu präzise!",
+                details: {
+                    was: "Roboter-Team 'TechKick 3000' gewinnt 4:2 gegen menschliche Nationalmannschaft",
+                    wann: "Samstag, 15. März 2026",
+                    wo: "Olympiastadion Berlin",
+                    wer: "TechKick 3000 (Roboter) vs. Deutsche Nationalmannschaft",
+                    wie: "Roboter waren schneller und machten keine Fehler. Zwei Tore in den letzten 5 Minuten.",
+                    warum: "Zum ersten Mal besiegten Roboter ein professionelles Team."
+                },
+                keywords: {
+                    was: ["Roboter", "TechKick", "4:2", "gewinnt", "Fussball", "Spiel"],
+                    wann: ["März", "15", "Samstag", "2026"],
+                    wo: ["Olympiastadion", "Berlin"],
+                    wer: ["Nationalmannschaft", "Roboter", "TechKick"],
+                    wie: ["schneller", "Fehler", "Tore", "Minuten"],
+                    warum: ["erste", "professionell", "besiegten", "sensationell"]
+                },
+                modelAnswer: "Am Samstag, dem 15. März 2026, fand im Olympiastadion Berlin ein großes Fussballspiel statt. Die Roboter-Team 'TechKick 3000' spielte gegen die deutsche Nationalmannschaft. Die Roboter gewannen das Spiel mit 4:2, weil sie schneller waren und keine Fehler machten. Dieses Ereignis ist wichtig, weil es das erste Mal ist, dass Roboter eine professionelle Mannschaft besiegt haben."
+            },
+            {
+                id: 2,
+                headline: "Kriminalfall im Schokoladenmuseum",
+                description: "Ein großer Diebstahl hat sich in Köln ereignet. Aus dem berühmten Schokoladenmuseum wurden 500 Kilogramm seltene Schokolade gestohlen. Die Polizei ermittelt und sucht nach den Tätern. Es ist der größte Schokola-Raub in der Geschichte des Museums!",
+                details: {
+                    was: "500 kg seltene Schokolade aus dem Museum gestohlen",
+                    wann: "In der Nacht von Freitag auf Samstag, 21. März 2026",
+                    wo: "Schokoladenmuseum Köln",
+                    wer: "Unbekannte Diebe, Polizei ermittelt",
+                    wie: "Die Diebe kamen durch einen Tunnel unter dem Museum",
+                    warum: "Die gestohlene Schokolade war über 100 Jahre alt und unbezahlbar"
+                },
+                keywords: {
+                    was: ["gestohlen", "Schokolade", "500 kg", "Diebstahl"],
+                    wann: ["März", "21", "Freitag", "Samstag", "Nacht"],
+                    wo: ["Köln", "Museum", "Schokoladenmuseum"],
+                    wer: ["Diebe", "Polizei", "Täter"],
+                    wie: ["Tunnel", "kamen", "unter"],
+                    warum: ["alt", "unbezahlbar", "wertvoll", "selten"]
+                },
+                modelAnswer: "In der Nacht von Freitag auf Samstag, dem 21. März 2026, wurde das Schokoladenmuseum in Köln bestohlen. Unbekannte Diebe stahlen 500 Kilogramm seltene Schokolade. Die Diebe gelangten durch einen Tunnel unter dem Museum ins Innere. Dieser Raub ist wichtig, weil die gestohlene Schokolade über 100 Jahre alt und unbezahlbar ist."
+            },
+            {
+                id: 3,
+                headline: "Red Bull bringt Getränk für Hunde auf den Markt",
+                description: "Eine überraschende Ankündigung von Red Bull: Das Unternehmen hat ein neues Energy-Getränk für Hunde entwickelt. Es heißt 'Red Bull Wuff' und wird ab sofort verkauft. Viele Tierärzte sind aber skeptisch gegenüber diesem Produkt.",
+                details: {
+                    was: "Red Bull lanciert 'Red Bull Wuff' — ein Energy-Drink für Hunde",
+                    wann: "Montag, 1. April 2026",
+                    wo: "Weltweit, Start in der Schweiz",
+                    wer: "Red Bull GmbH, Tierärzte sind skeptisch",
+                    wie: "Spezielle Formel mit Vitaminen, ohne Koffein",
+                    warum: "Erstes Energy-Getränk für Tiere, große Debatte über Tierschutz"
+                },
+                keywords: {
+                    was: ["Red Bull", "Wuff", "Getränk", "Hunde", "Energy-Drink"],
+                    wann: ["April", "1", "Montag", "2026"],
+                    wo: ["Schweiz", "weltweit", "Markt"],
+                    wer: ["Red Bull", "Tierärzte", "Hunde"],
+                    wie: ["Formel", "Vitamine", "Koffein", "ohne"],
+                    warum: ["Tierschutz", "Debatte", "erstes", "Tiere"]
+                },
+                modelAnswer: "Am Montag, dem 1. April 2026, kündigte Red Bull ein neues Produkt an: 'Red Bull Wuff'. Dies ist ein Energy-Getränk speziell für Hunde. Das Getränk enthält eine spezielle Formel mit Vitaminen, aber kein Koffein. Dieses Ereignis ist wichtig, weil es das erste Energy-Getränk für Tiere ist und eine große Debatte über Tierschutz ausgelöst hat."
+            },
+            {
+                id: 4,
+                headline: "Klimawandel: Schnee in der Sahara",
+                description: "Ein seltenes Phänomen hat die Wissenschaftler überrascht. In der Sahara-Wüste schneit es! Dies ist das erste Mal seit 50 Jahren. Die Temperaturen fielen unter den Gefrierpunkt, und ein ungewöhnliches Tiefdruckgebiet brachte kalte Luft von Europa.",
+                details: {
+                    was: "Zum ersten Mal seit 50 Jahren schneit es in der Sahara-Wüste",
+                    wann: "Mittwoch, 12. Februar 2026",
+                    wo: "Sahara-Wüste, Algerien",
+                    wer: "Wissenschaftler und lokale Bewohner",
+                    wie: "Ein ungewöhnliches Tiefdruckgebiet brachte kalte Luft aus Europa",
+                    warum: "Zeigt, wie extrem das Wetter durch den Klimawandel wird"
+                },
+                keywords: {
+                    was: ["Schnee", "Sahara", "seltenes Phänomen"],
+                    wann: ["Februar", "12", "Mittwoch", "50 Jahre"],
+                    wo: ["Sahara", "Algerien", "Wüste"],
+                    wer: ["Wissenschaftler", "Bewohner"],
+                    wie: ["Tiefdruckgebiet", "Temperatur", "kalte Luft", "Europa"],
+                    warum: ["Klimawandel", "extrem", "Wetter"]
+                },
+                modelAnswer: "Am Mittwoch, dem 12. Februar 2026, schneit es in der Sahara-Wüste in Algerien. Dies ist das erste Mal seit 50 Jahren! Wissenschaftler und lokale Bewohner sind überrascht. Ein ungewöhnliches Tiefdruckgebiet brachte sehr kalte Luft aus Europa. Dieses seltene Ereignis zeigt, wie extreme das Wetter durch den Klimawandel geworden ist."
+            },
+            {
+                id: 5,
+                headline: "Revolution im Nagellack",
+                description: "Eine 14-jährige Schülerin aus Zürich hat eine innovative Erfindung gemacht. Sie hat einen Nagellack entwickelt, der die Körpertemperatur misst! Der Nagellack ändert die Farbe je nach Temperatur. Ärzte sagen: Das könnte Leben retten!",
+                details: {
+                    was: "Eine Schülerin erfindet Nagellack, der die Temperatur misst",
+                    wann: "Donnerstag, 7. März 2026",
+                    wo: "Zürich, Schweiz (ETH-Schülerlabor)",
+                    wer: "Lara Meier (14), Schülerin aus Zürich",
+                    wie: "Der Nagellack ändert die Farbe je nach Körpertemperatur",
+                    warum: "Könnte Fieber frühzeitig erkennen und Leben retten"
+                },
+                keywords: {
+                    was: ["Nagellack", "Temperatur", "erfindet", "misst"],
+                    wann: ["März", "7", "Donnerstag", "2026"],
+                    wo: ["Zürich", "Schweiz", "ETH"],
+                    wer: ["Lara Meier", "Schülerin", "14 Jahre"],
+                    wie: ["Farbe", "ändert", "Körpertemperatur"],
+                    warum: ["Fieber", "Leben retten", "frühzeitig"]
+                },
+                modelAnswer: "Am Donnerstag, dem 7. März 2026, präsentierte Lara Meier ihre Erfindung im ETH-Schülerlabor in Zürich. Die 14-jährige Schülerin hat einen Nagellack entwickelt, der die Körpertemperatur misst. Der Nagellack ändert seine Farbe je nach Temperatur. Dies ist wichtig, weil dieser Nagellack Fieber frühzeitig erkennen könnte und somit Leben retten könnte."
+            },
+            {
+                id: 6,
+                headline: "Taylor Swift Konzert auf dem Mond",
+                description: "Eine sensationelle Ankündigung von Taylor Swift! Sie wird ein Konzert auf dem Mond spielen. SpaceX und die NASA arbeiten zusammen. Das Konzert wird live per Satellit zur Erde übertragen. Dies ist ein historisches Ereignis für die Musikgeschichte!",
+                details: {
+                    was: "Taylor Swift kündigt erstes Konzert auf dem Mond an",
+                    wann: "Geplant für Dezember 2027",
+                    wo: "SpaceX Mondstation 'Artemis Base'",
+                    wer: "Taylor Swift, SpaceX, NASA",
+                    wie: "Konzert wird per Satellit live auf die Erde übertragen",
+                    warum: "Erstes Musikereignis außerhalb der Erde"
+                },
+                keywords: {
+                    was: ["Konzert", "Mond", "Taylor Swift"],
+                    wann: ["Dezember", "2027"],
+                    wo: ["Mond", "Artemis Base", "SpaceX"],
+                    wer: ["Taylor Swift", "SpaceX", "NASA"],
+                    wie: ["Satellit", "live", "übertragen"],
+                    warum: ["Musik", "Erde", "erstes", "historisch"]
+                },
+                modelAnswer: "Taylor Swift wird 2027 ein einzigartiges Konzert spielen: auf dem Mond! Das Konzert findet auf der SpaceX Mondstation 'Artemis Base' statt. SpaceX und die NASA arbeiten zusammen. Das Konzert wird per Satellit live auf die Erde übertragen. Dieses Ereignis ist wichtig, weil es das erste Musikereignis außerhalb der Erde ist."
+            },
+            {
+                id: 7,
+                headline: "KI übernimmt Spital",
+                description: "Ein Schweizer Spital macht ein großes Experiment. Das Universitätsspital Basel wird komplett von Künstlicher Intelligenz gesteuert. Das KI-System 'MediMind' stellt Diagnosen, plant Operationen und bestellt Medikamente. Viele Patienten sind aber nervös!",
+                details: {
+                    was: "Ein Schweizer Spital wird komplett von KI gesteuert",
+                    wann: "Montag, 10. März 2026",
+                    wo: "Universitätsspital Basel",
+                    wer: "Ärzte, Patienten, KI-System 'MediMind'",
+                    wie: "KI stellt Diagnosen, plant Operationen und bestellt Medikamente",
+                    warum: "Erstes vollautomatisches Spital der Welt, aber Patienten sind nervös"
+                },
+                keywords: {
+                    was: ["KI", "Spital", "Künstliche Intelligenz", "gesteuert"],
+                    wann: ["März", "10", "Montag", "2026"],
+                    wo: ["Basel", "Universitätsspital", "Schweiz"],
+                    wer: ["MediMind", "Ärzte", "Patienten"],
+                    wie: ["Diagnosen", "Operationen", "Medikamente"],
+                    warum: ["vollautomatisches", "erste", "Welt", "nervös"]
+                },
+                modelAnswer: "Am Montag, dem 10. März 2026, startete das Universitätsspital Basel ein Experiment. Das Spital wird jetzt von der KI 'MediMind' gesteuert. Diese KI stellt Diagnosen, plant Operationen und bestellt Medikamente. Dieses Ereignis ist bedeutsam, weil es das erste vollautomatisches Spital der Welt ist. Viele Patienten sind jedoch nervös."
+            },
+            {
+                id: 8,
+                headline: "Schülerin findet Dinosaurier-Knochen",
+                description: "Ein großer paläontologischer Fund im Jura-Gebirge! Eine 12-jährige Schülerin hat beim Wandern einen Dinosaurier-Knochen gefunden. Der Knochen ist 65 Millionen Jahre alt! Wissenschaftler der Universität Bern untersuchen ihn jetzt genau.",
+                details: {
+                    was: "Eine Schülerin findet einen 65 Millionen Jahre alten Dinosaurier-Knochen",
+                    wann: "Sonntag, 9. März 2026",
+                    wo: "Jura-Gebirge, Kanton Solothurn, Schweiz",
+                    wer: "Emma Berger (12), Paläontologen der Universität Bern",
+                    wie: "Der Knochen ragte aus dem Felsen nach einem Erdrutsch",
+                    warum: "Könnte eine bisher unbekannte Dinosaurier-Art sein"
+                },
+                keywords: {
+                    was: ["Dinosaurier", "Knochen", "findet", "Schülerin"],
+                    wann: ["März", "9", "Sonntag", "65 Millionen Jahre", "2026"],
+                    wo: ["Jura-Gebirge", "Solothurn", "Schweiz"],
+                    wer: ["Emma Berger", "12 Jahre", "Paläontologen"],
+                    wie: ["Knochen", "Felsen", "Erdrutsch"],
+                    warum: ["unbekannte Art", "Dinosaurier", "wissenschaftlich"]
+                },
+                modelAnswer: "Am Sonntag, dem 9. März 2026, machte Emma Berger eine sensationelle Entdeckung. Die 12-jährige Schülerin fand beim Wandern im Jura-Gebirge einen Dinosaurier-Knochen. Der Knochen ist 65 Millionen Jahre alt! Er ragte aus dem Felsen nach einem Erdrutsch. Paläontologen der Universität Bern untersuchen ihn, weil er eine bisher unbekannte Dinosaurier-Art sein könnte."
+            },
+            {
+                id: 9,
+                headline: "Weltrekord: Grösstes Sandwich",
+                description: "Ein riesiges Sandwich ist auf dem Bundesplatz in Bern entstanden! 200 Bäcker aus der ganzen Schweiz haben zusammengearbeitet. Das Sandwich ist 150 Meter lang und wiegt 2 Tonnen. Der Erlös geht an die Tafel — an Organisation, die Essen für arme Menschen verteilt.",
+                details: {
+                    was: "Bäcker in Bern bauen das grösste Sandwich der Welt",
+                    wann: "Samstag, 22. März 2026",
+                    wo: "Bundesplatz, Bern, Schweiz",
+                    wer: "200 Bäcker aus der ganzen Schweiz",
+                    wie: "Das Sandwich ist 150 Meter lang und wiegt 2 Tonnen",
+                    warum: "Neuer Guinness-Weltrekord, Erlös geht an die Tafel"
+                },
+                keywords: {
+                    was: ["Sandwich", "Weltrekord", "grösste", "bauen"],
+                    wann: ["März", "22", "Samstag", "2026"],
+                    wo: ["Bern", "Bundesplatz", "Schweiz"],
+                    wer: ["Bäcker", "200"],
+                    wie: ["150 Meter", "2 Tonnen", "lang"],
+                    warum: ["Guinness", "Weltrekord", "Tafel", "Wohltätigkeit"]
+                },
+                modelAnswer: "Am Samstag, dem 22. März 2026, hatten 200 Bäcker aus der Schweiz eine großartige Idee. Sie bauten auf dem Bundesplatz in Bern das größte Sandwich der Welt. Das Sandwich war 150 Meter lang und wog 2 Tonnen! Dies ist ein neuer Guinness-Weltrekord. Der Erlös des Verkaufs geht an die Tafel, eine Organisation, die Essen für arme Menschen verteilt."
+            },
+            {
+                id: 10,
+                headline: "Sprechende Katze geht viral",
+                description: "Ein Video wird im Internet zum Hit: Eine Katze namens 'Mimi' sagt das Wort 'Mama'! Das Video hat schon 500 Millionen Aufrufe auf TikTok. Die Besitzerin Anna Hofer ist überrascht. Wissenschaftler untersuchen jetzt, ob Katzen wirklich Sprache lernen können.",
+                details: {
+                    was: "Video einer Katze, die 'Mama' sagt, hat 500 Millionen Klicks",
+                    wann: "Freitag, 14. März 2026",
+                    wo: "TikTok, die Katze lebt in Wien, Österreich",
+                    wer: "Katze 'Mimi', Besitzerin Anna Hofer",
+                    wie: "Die Katze imitiert menschliche Wörter — Wissenschaftler sind fasziniert",
+                    warum: "Forscher untersuchen jetzt, ob Katzen Sprache lernen können"
+                },
+                keywords: {
+                    was: ["Katze", "sagt", "Mama", "sprechende", "viral"],
+                    wann: ["März", "14", "Freitag", "2026"],
+                    wo: ["TikTok", "Wien", "Österreich"],
+                    wer: ["Mimi", "Anna Hofer"],
+                    wie: ["imitiert", "Wörter", "Sprache"],
+                    warum: ["Forscher", "lernen", "Wissenschaft", "Sprache"]
+                },
+                modelAnswer: "Am Freitag, dem 14. März 2026, wurde ein Video viral: Eine Katze namens 'Mimi' aus Wien sagt das Wort 'Mama'. Das Video hat schon 500 Millionen Aufrufe auf TikTok! Die Besitzerin Anna Hofer ist überrascht. Wissenschaftler und Forscher untersuchen jetzt, ob Katzen tatsächlich menschliche Sprache lernen können."
+            },
+            {
+                id: 11,
+                headline: "Schule ohne Noten",
+                description: "Eine Schule in Luzern wagt ein großes Experiment. Die Kantonsschule Luzern schafft alle Noten ab! Statt Noten gibt es ausführliche Gespräche und Portfolios. Die Schule hoffst, dass Schüler so weniger gestresst sind. Aber die Eltern streiten darüber!",
+                details: {
+                    was: "Eine Schule in Luzern schafft alle Noten ab",
+                    wann: "Ab dem neuen Schuljahr (August 2026)",
+                    wo: "Kantonsschule Luzern, Schweiz",
+                    wer: "Schulleitung, Eltern, Schülerinnen und Schüler",
+                    wie: "Statt Noten gibt es ausführliche Gespräche und Portfolios",
+                    warum: "Erstes Gymnasium der Schweiz ohne Noten, großer Streit bei den Eltern"
+                },
+                keywords: {
+                    was: ["Noten", "schafft", "ab", "Experiment"],
+                    wann: ["August", "2026", "Schuljahr"],
+                    wo: ["Luzern", "Kantonsschule", "Schweiz"],
+                    wer: ["Schulleitung", "Eltern", "Schüler"],
+                    wie: ["Gespräche", "Portfolios", "statt Noten"],
+                    warum: ["erstes", "Gymnasium", "Streit", "Stress"]
+                },
+                modelAnswer: "Ab August 2026 startet die Kantonsschule Luzern ein neues Abenteuer: keine Noten mehr! Statt Noten gibt es ausführliche Gespräche und Portfolios für die Schüler und Schülerinnen. Die Schulleitung hofft, dass das weniger Stress bedeutet. Dieses Experiment ist wichtig, weil es das erste Gymnasium der Schweiz ohne Noten ist. Aber es gibt großen Streit zwischen den Eltern!"
+            },
+            {
+                id: 12,
+                headline: "Unsichtbarer Rucksack erfunden",
+                description: "Ein Startup aus München zeigt eine fantastische Erfindung auf der CES in Las Vegas. Der Rucksack 'GhostPack' wird unsichtbar! Die spezielle Kamera-Stoff-Technologie zeigt den Hintergrund auf dem Rucksack. Es ist wie eine digitale Tarnung!",
+                details: {
+                    was: "Ein Startup präsentiert einen Rucksack, der unsichtbar wird",
+                    wann: "Dienstag, 18. März 2026",
+                    wo: "Technologie-Messe CES, Las Vegas, USA",
+                    wer: "Startup 'GhostPack' aus München",
+                    wie: "Spezielle Kamera-Stoff-Technologie zeigt den Hintergrund auf dem Rucksack",
+                    warum: "Könnte Militär und Mode revolutionieren"
+                },
+                keywords: {
+                    was: ["Rucksack", "unsichtbar", "GhostPack", "erfunden"],
+                    wann: ["März", "18", "Dienstag", "2026"],
+                    wo: ["CES", "Las Vegas", "USA"],
+                    wer: ["GhostPack", "München", "Startup"],
+                    wie: ["Kamera", "Stoff", "Technologie", "Hintergrund"],
+                    warum: ["Militär", "Mode", "revolutionieren"]
+                },
+                modelAnswer: "Am Dienstag, dem 18. März 2026, präsentierte das Startup 'GhostPack' aus München auf der CES in Las Vegas eine innovative Erfindung. Der Rucksack 'GhostPack' wird unsichtbar! Die spezielle Kamera-Stoff-Technologie zeigt den Hintergrund auf dem Rucksack. Diese Erfindung könnte Militär und Mode revolutionieren."
+            },
+            {
+                id: 13,
+                headline: "Vulkanausbruch in Island",
+                description: "Ein großer Vulkan auf Island bricht aus! Der Vulkan Katla speit Asche in den Himmel. Eine riesige Aschewolke steigt 12 Kilometer hoch auf. 1500 Menschen müssen evakuiert werden. Der Wind treibt die Asche nach Europa und legt den Flugverkehr lahm!",
+                details: {
+                    was: "Ein Vulkan auf Island bricht aus und legt den Flugverkehr lahm",
+                    wann: "Donnerstag, 20. März 2026",
+                    wo: "Vulkan Katla, Südisland",
+                    wer: "1500 Bewohner evakuiert, Fluggesellschaften streichen Flüge",
+                    wie: "Riesige Aschewolke steigt 12 km hoch, Wind treibt Asche nach Europa",
+                    warum: "Hunderte Flüge in Europa gestrichen, Erinnerung an Eyjafjallajökull 2010"
+                },
+                keywords: {
+                    was: ["Vulkan", "Ausbruch", "Katla", "Asche"],
+                    wann: ["März", "20", "Donnerstag", "2026"],
+                    wo: ["Island", "Südisland", "Katla"],
+                    wer: ["Bewohner", "1500", "Fluggesellschaften"],
+                    wie: ["Aschewolke", "12 Kilometer", "Wind", "Europa"],
+                    warum: ["Flugverkehr", "Flüge gestrichen", "Eyjafjallajökull"]
+                },
+                modelAnswer: "Am Donnerstag, dem 20. März 2026, brach der Vulkan Katla auf Südisland aus. Eine riesige Aschewolke stieg 12 Kilometer hoch auf. 1500 Bewohner mussten evakuiert werden. Der Wind trieb die Asche nach Europa. Hunderte von Flügen wurden gestrichen. Dieses Ereignis ist wichtig, weil es an den Vulkanausbruch Eyjafjallajökull von 2010 erinnert."
+            },
+            {
+                id: 14,
+                headline: "Erster Unterwasser-Zug",
+                description: "Japan hat eine sensationelle Eisenbahn-Verbindung gebaut! Der neue Hochgeschwindigkeitszug fährt 500 Kilometer pro Stunde — unter dem Meeresboden! Ein Unterwasser-Tunnel verbindet jetzt Tokio und Osaka. Die Reisezeit wird halbiert. Ein Wunder der japanischen Technik!",
+                details: {
+                    was: "Japan eröffnet den ersten Unterwasser-Hochgeschwindigkeitszug",
+                    wann: "Montag, 3. März 2026",
+                    wo: "Zwischen Tokio und Osaka, Japan (durch einen Unterwasser-Tunnel)",
+                    wer: "Japanische Regierung, Ingenieure",
+                    wie: "Der Zug fährt 500 km/h unter dem Meeresboden",
+                    warum: "Revolutioniert den Zugverkehr, Reisezeit halbiert sich"
+                },
+                keywords: {
+                    was: ["Unterwasser-Zug", "Hochgeschwindigkeitszug", "eröffnet"],
+                    wann: ["März", "3", "Montag", "2026"],
+                    wo: ["Tokio", "Osaka", "Japan", "Unterwasser-Tunnel"],
+                    wer: ["Japan", "Regierung", "Ingenieure"],
+                    wie: ["500 km/h", "Meeresboden", "Zug", "fährt"],
+                    warum: ["revolutioniert", "Zugverkehr", "Reisezeit", "schneller"]
+                },
+                modelAnswer: "Am Montag, dem 3. März 2026, eröffnete Japan den ersten Unterwasser-Hochgeschwindigkeitszug. Dieser Zug fährt 500 Kilometer pro Stunde unter dem Meeresboden! Ein Unterwasser-Tunnel verbindet Tokio und Osaka. Die Reisezeit wird halbiert. Dies ist ein großes Wunder der japanischen Technik und revolutioniert den Zugverkehr."
+            },
+            {
+                id: 15,
+                headline: "Elefant bricht aus Zoo aus und geht einkaufen",
+                description: "Ein außergewöhnliches Abenteuer in Zürich! Der Elefant 'Maxi' aus dem Zoo drückte ein kaputtes Tor auf und entlief. Er spazierte direkt in einen Migros-Supermarkt! Der 25-jährige Elefantenbulle folgte dem Geruch von Bananen. Gott sei Dank war keiner verletzt, aber es war chaotisch!",
+                details: {
+                    was: "Ein Elefant entkommt aus dem Zoo und spaziert in einen Supermarkt",
+                    wann: "Mittwoch, 26. März 2026",
+                    wo: "Zoo und Migros-Supermarkt, Zürich",
+                    wer: "Elefantenbulle 'Maxi' (25 Jahre), Zoowärter, erschrockene Kunden",
+                    wie: "Maxi drückte ein kaputtes Tor auf und folgte dem Geruch von Bananen",
+                    warum: "Diskussion über Tierhaltung in Zoos neu entfacht"
+                },
+                keywords: {
+                    was: ["Elefant", "ausbricht", "entkommt", "Zoo"],
+                    wann: ["März", "26", "Mittwoch", "2026"],
+                    wo: ["Zoo", "Supermarkt", "Migros", "Zürich"],
+                    wer: ["Maxi", "Elefant", "25 Jahre"],
+                    wie: ["Tor", "Bananen", "Geruch", "drückte"],
+                    warum: ["Tierhaltung", "Zoo", "Diskussion", "Debatte"]
+                },
+                modelAnswer: "Am Mittwoch, dem 26. März 2026, passierte in Zürich etwas Außergewöhnliches. Der Elefant 'Maxi' entkommte dem Zoo. Der 25-jährige Elefantenbulle drückte ein kaputtes Tor auf. Er spazierte direkt in einen Migros-Supermarkt, weil er dem Geruch von Bananen folgte. Dies ist wichtig, weil es eine neue Diskussion über Tierhaltung in Zoos entfacht hat."
+            }
+        ];
+
+        // Common German nouns to check for capitalization
+        const germanNouns = [
+            "schule", "schüler", "lehrer", "tag", "nacht", "stadt", "land", "museum", "bericht",
+            "mann", "frau", "kind", "auto", "haus", "straße", "platz", "park", "wasser",
+            "feuer", "baum", "blume", "tier", "hund", "katze", "vogel", "fisch", "film",
+            "musik", "buch", "brief", "telefon", "radio", "fernsehen", "zeitschrift",
+            "zeitung", "sport", "spiel", "fußball", "tanz", "lied", "geschichte", "sprache"
+        ];
+
+        let currentEvent = null;
+
+        function startNewEvent() {
+            currentEvent = events[Math.floor(Math.random() * events.length)];
+            displayEvent();
+            showScreen('eventScreen');
+        }
+
+        function displayEvent() {
+            document.getElementById('eventHeadline').textContent = currentEvent.headline;
+            document.getElementById('eventDescription').textContent = currentEvent.description;
+
+            const detailsHtml = `
+                <div class="detail-item">
+                    <div class="detail-label">Was</div>
+                    <div class="detail-value">${currentEvent.details.was}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Wann</div>
+                    <div class="detail-value">${currentEvent.details.wann}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Wo</div>
+                    <div class="detail-value">${currentEvent.details.wo}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Wer</div>
+                    <div class="detail-value">${currentEvent.details.wer}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Wie</div>
+                    <div class="detail-value">${currentEvent.details.wie}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Warum</div>
+                    <div class="detail-value">${currentEvent.details.warum}</div>
+                </div>
+            `;
+
+            document.getElementById('eventDetails').innerHTML = detailsHtml;
+            document.getElementById('reportTextarea').value = '';
+            updateSentenceCounter();
+        }
+
+        function updateSentenceCounter() {
+            const text = document.getElementById('reportTextarea').value;
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+            const counter = document.getElementById('sentenceCounter');
+
+            if (text.trim() === '') {
+                counter.textContent = '';
+            } else if (sentences < 4) {
+                counter.textContent = `${sentences} Satz(sätze) geschrieben. Mindestens 4 erforderlich! ⚠️`;
+                counter.className = 'sentence-counter error';
+            } else {
+                counter.textContent = `${sentences} Satz(sätze) ✓`;
+                counter.className = 'sentence-counter success';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('reportTextarea').addEventListener('input', updateSentenceCounter);
+        });
+
+        function checkReport() {
+            const text = document.getElementById('reportTextarea').value.trim();
+
+            if (text === '') {
+                alert('Bitte schreibe deinen Bericht!');
+                return;
+            }
+
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            if (sentences.length < 4) {
+                alert('Schreibe mindestens 4 Sätze!');
+                return;
+            }
+
+            // Check W-Fragen
+            const wfragenChecks = checkWFragen(text.toLowerCase());
+
+            // Check Grammar
+            const grammarChecks = checkGrammar(text, sentences);
+
+            // Calculate score
+            const wCovered = wfragenChecks.filter(w => w.covered).length;
+            const score = Math.round((wCovered / 6) * 5);
+
+            displayFeedback(wfragenChecks, grammarChecks, score);
+            showScreen('feedbackScreen');
+        }
+
+        function checkWFragen(textLower) {
+            const wfragen = [
+                { label: 'Was ist passiert?', key: 'was', keywords: currentEvent.keywords.was },
+                { label: 'Wann ist es passiert?', key: 'wann', keywords: currentEvent.keywords.wann },
+                { label: 'Wo ist es passiert?', key: 'wo', keywords: currentEvent.keywords.wo },
+                { label: 'Wer war beteiligt?', key: 'wer', keywords: currentEvent.keywords.wer },
+                { label: 'Wie ist es passiert?', key: 'wie', keywords: currentEvent.keywords.wie },
+                { label: 'Warum ist es wichtig?', key: 'warum', keywords: currentEvent.keywords.warum }
+            ];
+
+            return wfragen.map(w => {
+                const covered = w.keywords.some(keyword => textLower.includes(keyword.toLowerCase()));
+                let feedback = '';
+
+                if (!covered) {
+                    const articleMap = {
+                        'was': 'WAS (Was ist passiert)',
+                        'wann': 'WANN (Zeitpunkt)',
+                        'wo': 'WO (Ort)',
+                        'wer': 'WER (Personen/Objekte)',
+                        'wie': 'WIE (Methode)',
+                        'warum': 'WARUM (Bedeutung)'
+                    };
+                    feedback = `Du hast nicht erwähnt, ${articleMap[w.key]}!`;
+                }
+
+                return {
+                    question: w.label,
+                    covered: covered,
+                    feedback: feedback
+                };
+            });
+        }
+
+        function checkGrammar(text, sentences) {
+            const checks = [];
+
+            // Check sentence count
+            if (sentences.length < 4) {
+                checks.push({
+                    type: 'error',
+                    text: `Zu wenige Sätze: ${sentences.length}. Du brauchst mindestens 4.`
+                });
+            } else {
+                checks.push({
+                    type: 'good',
+                    text: `Sätze: ${sentences.length} ✓`
+                });
+            }
+
+            // Check capitalization of sentences
+            let capitalErrors = 0;
+            sentences.forEach(sentence => {
+                const trimmed = sentence.trim();
+                if (trimmed.length > 0 && trimmed[0] !== trimmed[0].toUpperCase()) {
+                    capitalErrors++;
+                }
+            });
+
+            if (capitalErrors > 0) {
+                checks.push({
+                    type: 'warning',
+                    text: `${capitalErrors} Satz(sätze) beginnt/beginnen nicht mit Großbuchstabe.`
+                });
+            } else {
+                checks.push({
+                    type: 'good',
+                    text: 'Alle Sätze beginnen mit Großbuchstabe ✓'
+                });
+            }
+
+            // Check for sentence ending punctuation
+            let punctuationErrors = 0;
+            sentences.forEach((sentence, index) => {
+                const trimmed = sentence.trim();
+                if (trimmed.length > 0 && !trimmed.endsWith('.') && !trimmed.endsWith('!') && !trimmed.endsWith('?')) {
+                    // This is a false check since we already split by punctuation, so skip
+                }
+            });
+
+            checks.push({
+                type: 'good',
+                text: 'Sätze enden mit Punktuation ✓'
+            });
+
+            // Check for very short sentences
+            let shortSentences = 0;
+            sentences.forEach(sentence => {
+                const words = sentence.trim().split(/\s+/).length;
+                if (words < 4) {
+                    shortSentences++;
+                }
+            });
+
+            if (shortSentences > 0) {
+                checks.push({
+                    type: 'warning',
+                    text: `${shortSentences} Satz(sätze) sehr kurz (weniger als 4 Wörter). Versuche längere Sätze!`
+                });
+            }
+
+            // Check for common noun capitalization
+            let lowercaseNouns = 0;
+            const lowerText = text;
+            germanNouns.forEach(noun => {
+                const regex = new RegExp(`\\b${noun}\\b`, 'gi');
+                const matches = lowerText.match(regex) || [];
+                matches.forEach(match => {
+                    if (match[0] === match[0].toLowerCase()) {
+                        lowercaseNouns++;
+                    }
+                });
+            });
+
+            if (lowercaseNouns > 0) {
+                checks.push({
+                    type: 'warning',
+                    text: `Achte darauf: Nomen in Deutsch werden großgeschrieben!`
+                });
+            } else {
+                checks.push({
+                    type: 'good',
+                    text: 'Nomen werden korrekt großgeschrieben ✓'
+                });
+            }
+
+            return checks;
+        }
+
+        function displayFeedback(wfragenChecks, grammarChecks, score) {
+            // W-Fragen feedback
+            let wfragenHtml = '';
+            wfragenChecks.forEach(check => {
+                const icon = check.covered ? '✓' : '✗';
+                const color = check.covered ? 'var(--teal)' : 'var(--rose)';
+                wfragenHtml += `
+                    <div class="check-item">
+                        <div class="check-icon" style="color: ${color}; font-weight: bold;">${icon}</div>
+                        <div class="check-content">
+                            <div class="check-question">${check.question}</div>
+                            ${check.feedback ? `<div class="check-feedback">${check.feedback}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('wfragenFeedback').innerHTML = wfragenHtml;
+
+            // Grammar feedback
+            let grammarHtml = '';
+            grammarChecks.forEach(check => {
+                const statusClass = check.type === 'good' ? 'status-good' :
+                                   check.type === 'warning' ? 'status-warning' : 'status-error';
+                const icon = check.type === 'good' ? '✓' : check.type === 'warning' ? '⚠' : '✗';
+
+                grammarHtml += `
+                    <div class="grammar-item">
+                        <span class="grammar-status ${statusClass}">${icon}</span>
+                        ${check.text}
+                    </div>
+                `;
+            });
+            document.getElementById('grammarFeedback').innerHTML = grammarHtml;
+
+            // Star rating
+            let stars = '';
+            for (let i = 0; i < 5; i++) {
+                stars += `<span class="star ${i < score ? 'filled' : ''}">★</span>`;
+            }
+            document.getElementById('starRating').innerHTML = stars;
+
+            // Model answer
+            document.getElementById('modelAnswer').textContent = currentEvent.modelAnswer;
+        }
+
+        function backToIntro() {
+            showScreen('introScreen');
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>

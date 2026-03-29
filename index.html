@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>The Atomic Salon — Elia's Learning Hub</title>
+<title>Elia's Atomic Learning Salon</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -50,14 +50,6 @@ body{
   text-shadow:2px 2px 0 var(--pink),4px 4px 0 rgba(0,0,0,.06);
   position:relative;
 }
-.hero-sub{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(16px,3.5vw,28px);
-  font-weight:700;
-  color:var(--brown);
-  margin-bottom:6px;
-  position:relative;
-}
 .hero-name{
   font-family:'DM Sans',sans-serif;
   font-size:clamp(14px,2.5vw,18px);
@@ -68,203 +60,359 @@ body{
   position:relative;
 }
 
-/* ── SPARKLES (CSS atomic starbursts) ── */
+/* ── SPARKLES ── */
 .sparkle{position:absolute;pointer-events:none}
-.sparkle::before,.sparkle::after{
-  content:'';position:absolute;background:var(--pink);
-}
+.sparkle::before,.sparkle::after{content:'';position:absolute;background:var(--pink)}
 .sparkle::before{width:2px;height:20px;left:50%;top:50%;transform:translate(-50%,-50%)}
 .sparkle::after{width:20px;height:2px;left:50%;top:50%;transform:translate(-50%,-50%)}
 .sparkle.mint::before,.sparkle.mint::after{background:var(--mint)}
 .sparkle.sm::before{height:12px}.sparkle.sm::after{width:12px}
 .sparkle.lg::before{height:28px}.sparkle.lg::after{width:28px}
 
-/* ── ATOM ICON (pure CSS) ── */
-.atom{
-  width:60px;height:60px;margin:20px auto 10px;position:relative;
-}
-.atom .nucleus{
-  width:14px;height:14px;background:var(--pink-hot);border-radius:50%;
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  box-shadow:0 0 10px var(--pink);
-}
-.atom .orbit{
-  position:absolute;width:100%;height:100%;
-  border:2px solid var(--mint);border-radius:50%;
-  top:0;left:0;
-}
+/* ── ATOM ICON ── */
+.atom{width:60px;height:60px;margin:20px auto 10px;position:relative}
+.atom .nucleus{width:14px;height:14px;background:var(--pink-hot);border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--pink)}
+.atom .orbit{position:absolute;width:100%;height:100%;border:2px solid var(--mint);border-radius:50%;top:0;left:0}
 .atom .orbit:nth-child(2){transform:rotate(60deg)}
 .atom .orbit:nth-child(3){transform:rotate(-60deg)}
 
 /* ── DIVIDER ── */
-.retro-divider{
-  display:flex;align-items:center;gap:12px;
-  max-width:500px;margin:0 auto 30px;padding:0 20px;
-}
+.retro-divider{display:flex;align-items:center;gap:12px;max-width:500px;margin:0 auto 30px;padding:0 20px}
 .retro-divider .line{flex:1;height:2px;background:var(--pink)}
-.retro-divider .diamond{
-  width:10px;height:10px;background:var(--pink-hot);
-  transform:rotate(45deg);flex-shrink:0;
-}
+.retro-divider .diamond{width:10px;height:10px;background:var(--pink-hot);transform:rotate(45deg);flex-shrink:0}
 
-/* ── SUBJECTS SECTION ── */
-.subjects{
-  padding:10px 16px 50px;
-  max-width:900px;margin:0 auto;
+/* ── SECTIONS ── */
+.subjects{padding:10px 16px 50px;max-width:960px;margin:0 auto}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(20px,4vw,32px);font-weight:900;color:var(--charcoal);text-align:center;margin-bottom:6px}
+.section-sub{text-align:center;font-size:15px;color:var(--brown);margin-bottom:24px;opacity:.7}
+
+/* ═══════════════════════════════════════
+   FEATURED CARDS — Big visual hero cards
+   ═══════════════════════════════════════ */
+.featured-grid{
+  display:flex;flex-direction:column;gap:24px;
+  margin-bottom:40px;
 }
-.section-title{
+.featured-card{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  min-height:280px;
+  border-radius:20px;
+  overflow:hidden;
+  border:3px solid var(--cream-dark);
+  transition:all .35s cubic-bezier(.4,0,.2,1);
+  cursor:pointer;
+  text-decoration:none;color:inherit;
+  position:relative;
+}
+.featured-card:hover{
+  transform:translateY(-6px);
+  border-color:var(--pink);
+  box-shadow:0 12px 40px rgba(233,30,120,.18);
+}
+.featured-card .card-visual{
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  position:relative;overflow:hidden;
+}
+.featured-card .card-visual svg{
+  width:100%;max-width:320px;height:auto;
+  filter:drop-shadow(2px 4px 8px rgba(0,0,0,.1));
+}
+.featured-card .card-content{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:28px 24px;
+  background:var(--cream);
+}
+.featured-card .card-starburst{
+  position:absolute;top:14px;right:14px;
+  width:50px;height:50px;
+  background:var(--pink-hot);color:#fff;
+  font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  text-transform:uppercase;letter-spacing:.5px;
+  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  z-index:2;
+}
+.featured-card .fc-subject{
   font-family:'Playfair Display',serif;
-  font-size:clamp(20px,4vw,32px);
-  font-weight:900;
-  color:var(--charcoal);
-  text-align:center;
-  margin-bottom:6px;
+  font-size:clamp(22px,3.5vw,28px);font-weight:900;
+  color:var(--charcoal);margin-bottom:4px;
 }
-.section-sub{
-  text-align:center;font-size:15px;color:var(--brown);
-  margin-bottom:24px;opacity:.7;
+.featured-card .fc-lesson{
+  font-size:clamp(14px,2vw,16px);color:var(--brown);
+  font-weight:600;margin-bottom:12px;
 }
+.featured-card .fc-desc{
+  font-size:14px;color:#6b7280;line-height:1.6;margin-bottom:16px;
+}
+.featured-card .fc-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 24px;border-radius:25px;
+  font-size:14px;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;
+  background:var(--pink-hot);color:#fff;
+  width:fit-content;
+  transition:background .2s;
+}
+.featured-card:hover .fc-btn{background:#d01568}
 
-/* ── SUBJECT CARDS ── */
+/* Visual backgrounds */
+.vis-rome{background:linear-gradient(135deg,#fef3c7 0%,#fce4ec 50%,#ede9fe 100%)}
+.vis-french{background:linear-gradient(135deg,var(--pink-light) 0%,var(--mint-pale) 100%)}
+.vis-report{background:linear-gradient(135deg,var(--mint-pale) 0%,#fef3c7 50%,var(--pink-light) 100%)}
+
+/* ── SMALLER SUBJECT CARDS (existing) ── */
 .card-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
   gap:20px;
 }
 .subject-card{
-  background:var(--cream);
-  border-radius:16px;
-  overflow:hidden;
-  border:3px solid var(--cream-dark);
-  transition:all .3s;
-  cursor:pointer;
-  position:relative;
-  text-decoration:none;color:inherit;
-  display:block;
+  background:var(--cream);border-radius:16px;overflow:hidden;
+  border:3px solid var(--cream-dark);transition:all .3s;
+  cursor:pointer;position:relative;text-decoration:none;color:inherit;display:block;
 }
 .subject-card:hover,.subject-card:active{
-  transform:translateY(-4px);
-  border-color:var(--pink);
+  transform:translateY(-4px);border-color:var(--pink);
   box-shadow:0 8px 30px rgba(233,30,120,.15);
 }
-.card-banner{
-  height:100px;
-  display:flex;align-items:center;justify-content:center;
-  position:relative;overflow:hidden;
-}
+.card-banner{height:100px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .card-banner.french{background:linear-gradient(135deg,var(--pink-light),var(--mint-pale))}
 .card-banner.physics{background:linear-gradient(135deg,var(--mint-light),var(--cream))}
-.card-banner.maths{background:linear-gradient(135deg,#fef3c7,var(--pink-light))}
-.card-banner.english{background:linear-gradient(135deg,var(--mint-pale),#e0e7ff)}
 .card-banner.biology{background:linear-gradient(135deg,#ede9fe,var(--mint-light))}
-.card-banner.coming{background:repeating-conic-gradient(var(--cream-dark) 0% 25%,var(--cream) 0% 50%) 0 0/20px 20px}
 .card-emoji{font-size:48px;position:relative;z-index:1}
 .card-body{padding:16px}
-.card-subject{
-  font-family:'Playfair Display',serif;
-  font-size:18px;font-weight:900;
-  color:var(--charcoal);margin-bottom:2px;
-}
+.card-subject{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--charcoal);margin-bottom:2px}
 .card-lesson{font-size:14px;color:var(--brown);margin-bottom:8px;font-weight:500}
 .card-desc{font-size:13px;color:#6b7280;line-height:1.5;margin-bottom:12px}
-.card-tag{
-  display:inline-block;
-  padding:4px 12px;border-radius:20px;
-  font-size:11px;font-weight:700;
-  letter-spacing:.5px;text-transform:uppercase;
-}
+.card-tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
 .tag-live{background:var(--mint-light);color:#065f46}
-.tag-soon{background:var(--pink-light);color:var(--pink-hot)}
-.card-starburst{
-  position:absolute;top:10px;right:10px;
-  width:40px;height:40px;
-  background:var(--pink-hot);color:#fff;
-  font-size:10px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  text-transform:uppercase;letter-spacing:.5px;
-  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
-}
 
 /* ── FOOTER ── */
-.footer{
-  text-align:center;padding:30px 16px;
-  font-size:13px;color:var(--brown);opacity:.5;
-}
-
-/* ── COMING SOON OVERLAY ── */
-.card-overlay{
-  position:absolute;top:0;left:0;right:0;bottom:0;
-  background:rgba(245,240,225,.7);
-  display:flex;align-items:center;justify-content:center;
-  border-radius:13px;
-}
-.card-overlay span{
-  font-family:'Playfair Display',serif;
-  font-size:16px;font-weight:700;color:var(--brown);
-  padding:6px 16px;background:var(--cream);
-  border:2px dashed var(--pink);border-radius:10px;
-}
+.footer{text-align:center;padding:30px 16px;font-size:13px;color:var(--brown);opacity:.5}
 
 /* ── MOBILE ── */
-@media(max-width:600px){
+@media(max-width:700px){
   .hero{padding:30px 16px 28px}
+  .featured-card{grid-template-columns:1fr;min-height:auto}
+  .featured-card .card-visual{min-height:200px;padding:20px}
+  .featured-card .card-content{padding:20px 16px}
   .card-grid{grid-template-columns:1fr}
   .card-banner{height:80px}
   .card-emoji{font-size:38px}
 }
+
+/* ── SUBTLE ANIMATIONS ── */
+@keyframes pulse-glow{
+  0%,100%{filter:drop-shadow(0 0 4px rgba(233,30,120,.2))}
+  50%{filter:drop-shadow(0 0 12px rgba(233,30,120,.4))}
+}
+.featured-card .card-visual svg{animation:pulse-glow 3s ease-in-out infinite}
 </style>
 </head>
 <body>
 
 <!-- CHECKERBOARD TOP BORDER -->
 <div class="checker-border">
-
-<!-- HERO -->
 <div class="hero">
-  <!-- Sparkle decorations -->
   <div class="sparkle sm" style="top:15%;left:8%"></div>
   <div class="sparkle mint" style="top:25%;right:12%"></div>
   <div class="sparkle lg" style="bottom:20%;left:15%"></div>
   <div class="sparkle sm mint" style="bottom:30%;right:8%"></div>
   <div class="sparkle" style="top:10%;right:30%"></div>
   <div class="sparkle mint sm" style="top:40%;left:25%"></div>
-
-  <!-- Atom icon -->
   <div class="atom">
-    <div class="orbit"></div>
-    <div class="orbit"></div>
-    <div class="orbit"></div>
-    <div class="nucleus"></div>
+    <div class="orbit"></div><div class="orbit"></div><div class="orbit"></div><div class="nucleus"></div>
   </div>
-
-  <h1 class="hero-title">The Atomic Salon</h1>
-  <p class="hero-sub">Elia's Learning Hub</p>
+  <h1 class="hero-title">Elia's Atomic Learning Salon</h1>
   <p class="hero-name">Where school meets style</p>
-
   <div style="margin-top:20px">
-    <div class="retro-divider">
-      <div class="line"></div>
-      <div class="diamond"></div>
-      <div class="line"></div>
-    </div>
+    <div class="retro-divider"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
   </div>
 </div>
+</div>
 
-</div><!-- end checker border -->
-
-<!-- SUBJECTS -->
+<!-- ═══════════════════════════════════════ -->
+<!-- FEATURED NEW APPS — Big visual cards   -->
+<!-- ═══════════════════════════════════════ -->
 <div class="subjects">
-  <h2 class="section-title">Pick Your Station</h2>
-  <p class="section-sub">Each card opens an interactive lesson. More coming soon!</p>
+  <h2 class="section-title">What's New</h2>
+  <p class="section-sub">Three fresh stations just opened!</p>
+
+  <div class="featured-grid">
+
+    <!-- ██ ROME HISTORY DECK ██ -->
+    <a class="featured-card" href="rome-history-deck.html">
+      <div class="card-visual vis-rome">
+        <div class="card-starburst">New!</div>
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <!-- Sky -->
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fce4ec"/><stop offset="100%" stop-color="#fef3c7"/></linearGradient>
+          </defs>
+          <!-- Ground -->
+          <rect x="0" y="210" width="400" height="50" rx="4" fill="#e8e0cc"/>
+          <!-- Roman Temple -->
+          <rect x="120" y="100" width="160" height="110" rx="2" fill="#f5f0e1" stroke="#c8a96e" stroke-width="2"/>
+          <!-- Pediment (triangle roof) -->
+          <polygon points="110,100 200,45 290,100" fill="#fce4ec" stroke="#c8a96e" stroke-width="2"/>
+          <!-- Columns -->
+          <rect x="132" y="110" width="14" height="95" rx="3" fill="#fff" stroke="#d4c4a0" stroke-width="1.5"/>
+          <rect x="160" y="110" width="14" height="95" rx="3" fill="#fff" stroke="#d4c4a0" stroke-width="1.5"/>
+          <rect x="226" y="110" width="14" height="95" rx="3" fill="#fff" stroke="#d4c4a0" stroke-width="1.5"/>
+          <rect x="254" y="110" width="14" height="95" rx="3" fill="#fff" stroke="#d4c4a0" stroke-width="1.5"/>
+          <!-- Door -->
+          <rect x="185" y="150" width="30" height="55" rx="12" fill="#c8a96e"/>
+          <!-- SPQR text -->
+          <text x="200" y="85" text-anchor="middle" font-family="'Playfair Display',serif" font-size="18" font-weight="900" fill="#4a3728">SPQR</text>
+          <!-- Laurel wreath left -->
+          <path d="M160,60 Q145,50 150,35 Q155,45 160,52" fill="#a8e6cf" stroke="#7bc67e" stroke-width="1"/>
+          <path d="M155,65 Q138,58 140,42 Q148,52 155,58" fill="#a8e6cf" stroke="#7bc67e" stroke-width="1"/>
+          <!-- Laurel wreath right -->
+          <path d="M240,60 Q255,50 250,35 Q245,45 240,52" fill="#a8e6cf" stroke="#7bc67e" stroke-width="1"/>
+          <path d="M245,65 Q262,58 260,42 Q252,52 245,58" fill="#a8e6cf" stroke="#7bc67e" stroke-width="1"/>
+          <!-- Wolf + twins icon (left) -->
+          <ellipse cx="55" cy="185" rx="35" ry="25" fill="#f4a7bb" opacity=".3"/>
+          <text x="55" y="193" text-anchor="middle" font-size="32">🐺</text>
+          <!-- Sword icon (right) -->
+          <ellipse cx="345" cy="185" rx="35" ry="25" fill="#fef3c7" opacity=".5"/>
+          <text x="345" y="193" text-anchor="middle" font-size="32">⚔️</text>
+          <!-- Timeline bar -->
+          <rect x="30" y="230" width="340" height="6" rx="3" fill="#c8a96e" opacity=".5"/>
+          <circle cx="50" cy="233" r="5" fill="#e91e78"/>
+          <text x="50" y="250" text-anchor="middle" font-size="8" fill="#4a3728">753 v.Chr.</text>
+          <circle cx="200" cy="233" r="5" fill="#e91e78"/>
+          <text x="200" y="250" text-anchor="middle" font-size="8" fill="#4a3728">44 v.Chr.</text>
+          <circle cx="350" cy="233" r="5" fill="#e91e78"/>
+          <text x="350" y="250" text-anchor="middle" font-size="8" fill="#4a3728">476 n.Chr.</text>
+        </svg>
+      </div>
+      <div class="card-content">
+        <div class="fc-subject">Geschichte</div>
+        <div class="fc-lesson">Das Antike Rom — Aufstieg und Fall</div>
+        <div class="fc-desc">22 interaktive Folien: Romulus & Remus, die Gesellschaftspyramide, Republik, Standeskampfe, Punische Kriege, Caesar, Augustus, Christentum, Untergang Westroms. Mit Quiz!</div>
+        <div class="fc-btn">Start Lernen &rarr;</div>
+      </div>
+    </a>
+
+    <!-- ██ GERMAN REPORT WRITER ██ -->
+    <a class="featured-card" href="german-report-writer.html" style="direction:rtl">
+      <div class="card-content" style="direction:ltr">
+        <div class="fc-subject">Deutsch</div>
+        <div class="fc-lesson">Nachrichtenredaktion</div>
+        <div class="fc-desc">Jedes Mal ein neues verrucktes Ereignis: Roboter-Fussball, Schokoladen-Diebstahl, Mond-Konzert, sprechende Katze! Schreibe Berichte mit den W-Fragen und prufe Grammatik.</div>
+        <div class="fc-btn">Bericht Schreiben &rarr;</div>
+      </div>
+      <div class="card-visual vis-report" style="direction:ltr">
+        <div class="card-starburst">New!</div>
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <!-- Newspaper -->
+          <rect x="80" y="30" width="240" height="180" rx="6" fill="#fff" stroke="#e8e0cc" stroke-width="2"/>
+          <rect x="80" y="30" width="240" height="40" rx="6" fill="#f4a7bb"/>
+          <rect x="80" y="64" width="240" height="6" fill="#f4a7bb"/>
+          <text x="200" y="58" text-anchor="middle" font-family="'Playfair Display',serif" font-size="18" font-weight="900" fill="#fff">BREAKING NEWS</text>
+          <!-- Headlines -->
+          <rect x="100" y="82" width="200" height="8" rx="2" fill="#e8e0cc"/>
+          <rect x="100" y="96" width="160" height="6" rx="2" fill="#f0ebe0"/>
+          <!-- Image placeholder -->
+          <rect x="100" y="112" width="90" height="70" rx="4" fill="#fce4ec" stroke="#f4a7bb" stroke-width="1"/>
+          <text x="145" y="152" text-anchor="middle" font-size="28">🤖</text>
+          <!-- Text lines -->
+          <rect x="200" y="115" width="105" height="5" rx="2" fill="#e8e0cc"/>
+          <rect x="200" y="126" width="100" height="5" rx="2" fill="#f0ebe0"/>
+          <rect x="200" y="137" width="90" height="5" rx="2" fill="#e8e0cc"/>
+          <rect x="200" y="148" width="95" height="5" rx="2" fill="#f0ebe0"/>
+          <rect x="200" y="159" width="80" height="5" rx="2" fill="#e8e0cc"/>
+          <rect x="200" y="170" width="70" height="5" rx="2" fill="#f0ebe0"/>
+          <!-- More text lines bottom -->
+          <rect x="100" y="190" width="200" height="5" rx="2" fill="#f0ebe0"/>
+          <rect x="100" y="200" width="180" height="5" rx="2" fill="#e8e0cc"/>
+          <!-- W-Fragen floating labels -->
+          <rect x="15" y="50" width="55" height="22" rx="11" fill="#e91e78"/>
+          <text x="42" y="65" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Was?</text>
+          <rect x="10" y="90" width="60" height="22" rx="11" fill="#a8e6cf"/>
+          <text x="40" y="105" text-anchor="middle" font-size="11" font-weight="700" fill="#2d2d2d">Wann?</text>
+          <rect x="20" y="130" width="50" height="22" rx="11" fill="#f4a7bb"/>
+          <text x="45" y="145" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Wo?</text>
+          <rect x="330" y="80" width="55" height="22" rx="11" fill="#c8a96e"/>
+          <text x="358" y="95" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Wer?</text>
+          <rect x="335" y="120" width="55" height="22" rx="11" fill="#e91e78"/>
+          <text x="362" y="135" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Wie?</text>
+          <rect x="325" y="160" width="68" height="22" rx="11" fill="#a8e6cf"/>
+          <text x="359" y="175" text-anchor="middle" font-size="11" font-weight="700" fill="#2d2d2d">Warum?</text>
+          <!-- Fun event icons -->
+          <text x="40" y="200" font-size="24">⚽</text>
+          <text x="360" y="230" font-size="24">🍫</text>
+          <text x="30" y="240" font-size="20">🌙</text>
+          <text x="365" y="55" font-size="20">🐱</text>
+        </svg>
+      </div>
+    </a>
+
+    <!-- ██ FRENCH VOCAB TRAINER ██ -->
+    <a class="featured-card" href="french-vocab-trainer.html">
+      <div class="card-visual vis-french">
+        <div class="card-starburst">New!</div>
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <!-- Eiffel Tower (simplified) -->
+          <polygon points="200,20 170,220 230,220" fill="none" stroke="#c8a96e" stroke-width="3"/>
+          <polygon points="200,20 180,220 220,220" fill="#fef3c7" opacity=".3"/>
+          <line x1="172" y1="140" x2="228" y2="140" stroke="#c8a96e" stroke-width="2"/>
+          <line x1="175" y1="180" x2="225" y2="180" stroke="#c8a96e" stroke-width="2"/>
+          <!-- Arch at middle -->
+          <path d="M182,140 Q200,125 218,140" fill="none" stroke="#c8a96e" stroke-width="2"/>
+          <!-- Base platform -->
+          <rect x="160" y="218" width="80" height="8" rx="2" fill="#c8a96e"/>
+          <!-- French flag colors (subtle background stripes) -->
+          <rect x="0" y="0" width="133" height="260" fill="#dbeafe" opacity=".15"/>
+          <rect x="267" y="0" width="133" height="260" fill="#fce4ec" opacity=".15"/>
+          <!-- Metro sign -->
+          <circle cx="70" cy="80" r="28" fill="#fff" stroke="#c8a96e" stroke-width="2"/>
+          <text x="70" y="75" text-anchor="middle" font-family="'Playfair Display',serif" font-size="10" font-weight="700" fill="#e91e78">METRO</text>
+          <text x="70" y="90" text-anchor="middle" font-size="20">🚇</text>
+          <!-- Vocab cards floating -->
+          <rect x="290" y="40" width="100" height="50" rx="8" fill="#fff" stroke="#f4a7bb" stroke-width="2" transform="rotate(5,340,65)"/>
+          <text x="340" y="60" text-anchor="middle" font-size="10" font-weight="700" fill="#e91e78">je voudrais</text>
+          <text x="340" y="78" text-anchor="middle" font-size="9" fill="#6b7280">I would like</text>
+          <rect x="300" y="110" width="90" height="45" rx="8" fill="#fff" stroke="#a8e6cf" stroke-width="2" transform="rotate(-3,345,132)"/>
+          <text x="345" y="130" text-anchor="middle" font-size="10" font-weight="700" fill="#4a3728">magnifique</text>
+          <text x="345" y="145" text-anchor="middle" font-size="9" fill="#6b7280">magnificent</text>
+          <!-- Croissant & beret -->
+          <text x="65" y="180" font-size="32">🥐</text>
+          <text x="310" y="210" font-size="28">🎬</text>
+          <!-- Muscle / repeat icon -->
+          <circle cx="70" cy="230" r="18" fill="#e91e78" opacity=".15"/>
+          <text x="70" y="237" text-anchor="middle" font-size="20">💪</text>
+          <!-- Speech bubble -->
+          <rect x="10" y="120" width="100" height="35" rx="10" fill="#fff" stroke="#a8e6cf" stroke-width="1.5"/>
+          <text x="60" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#4a3728">Ça me plaît!</text>
+          <polygon points="50,155 60,155 45,168" fill="#fff" stroke="#a8e6cf" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="card-content">
+        <div class="fc-subject">French</div>
+        <div class="fc-lesson">Leçon 5 — Vocab Muscle Memory</div>
+        <div class="fc-desc">Paris, transport, directions, vouloir/pouvoir, aventure, cinéma. Learn phrases, then drill them with three exercise types until they stick.</div>
+        <div class="fc-btn">Start Training &rarr;</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- DIVIDER -->
+  <div style="margin:10px auto 30px">
+    <div class="retro-divider"><div class="line"></div><div class="diamond"></div><div class="line"></div></div>
+  </div>
+
+  <h2 class="section-title">More Stations</h2>
+  <p class="section-sub">Previously opened — still ready for you!</p>
 
   <div class="card-grid">
 
-    <!-- FRENCH (LIVE) -->
+    <!-- FRENCH LECON 4 -->
     <a class="subject-card" href="french-lecon4.html">
-      <div class="card-banner french">
-        <div class="card-starburst">New!</div>
-        <span class="card-emoji">🇫🇷</span>
-      </div>
+      <div class="card-banner french"><span class="card-emoji">🇫🇷</span></div>
       <div class="card-body">
         <div class="card-subject">French</div>
         <div class="card-lesson">Leçon 4 — Le Cours intensif 1</div>
@@ -273,12 +421,9 @@ body{
       </div>
     </a>
 
-    <!-- PHYSICS (LIVE) -->
+    <!-- PHYSICS -->
     <a class="subject-card" href="energy-quiz.html">
-      <div class="card-banner physics">
-        <div class="card-starburst">New!</div>
-        <span class="card-emoji">⚡</span>
-      </div>
+      <div class="card-banner physics"><span class="card-emoji">⚡</span></div>
       <div class="card-body">
         <div class="card-subject">Physics</div>
         <div class="card-lesson">Energy Stores, Transfers & Calculations</div>
@@ -287,12 +432,9 @@ body{
       </div>
     </a>
 
-    <!-- BIOLOGY (LIVE) -->
+    <!-- BIOLOGY -->
     <a class="subject-card" href="immune-ecology-app.html">
-      <div class="card-banner biology">
-        <div class="card-starburst">New!</div>
-        <span class="card-emoji">🧬</span>
-      </div>
+      <div class="card-banner biology"><span class="card-emoji">🧬</span></div>
       <div class="card-body">
         <div class="card-subject">Biology</div>
         <div class="card-lesson">Immune System & Ecology</div>
@@ -304,9 +446,7 @@ body{
   </div>
 </div>
 
-<div class="footer">
-  The Atomic Salon &mdash; Made with love for Elia
-</div>
+<div class="footer">Elia's Atomic Learning Salon &mdash; Made with love</div>
 
 </body>
 </html>

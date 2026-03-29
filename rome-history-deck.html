@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Das Antike Rom - Interaktives Lerndeck</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #fef0f5;
+            --surface: #ffffff;
+            --gold: #d4849b;
+            --gold-light: #f2b5c8;
+            --teal: #b8a9c9;
+            --rose: #e74c7a;
+            --text: #3d2b3d;
+            --text-dim: #8b7088;
+            --accent: #f7c5d5;
+            --glass: rgba(255, 255, 255, 0.7);
+            --shine: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 50%, #fce4ec 100%);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fef0f5 0%, #fce4ec 30%, #f3e5f5 60%, #fef0f5 100%);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Particle animation */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--gold-light);
+            border-radius: 50%;
+            opacity: 0.4;
+            box-shadow: 0 0 8px rgba(212, 132, 155, 0.6);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Blob shapes */
+        .blob {
+            position: fixed;
+            opacity: 0.08;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--rose);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            top: -100px;
+            left: -100px;
+            animation: blobMove1 8s infinite;
+        }
+
+        .blob-2 {
+            width: 350px;
+            height: 350px;
+            background: var(--teal);
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            bottom: -100px;
+            right: -100px;
+            animation: blobMove2 10s infinite;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--gold);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            top: 50%;
+            right: -150px;
+            animation: blobMove3 12s infinite;
+        }
+
+        @keyframes blobMove1 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -50px) rotate(120deg); }
+            66% { transform: translate(-20px, 30px) rotate(240deg); }
+        }
+
+        @keyframes blobMove2 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-30px, 50px) rotate(120deg); }
+            66% { transform: translate(20px, -30px) rotate(240deg); }
+        }
+
+        @keyframes blobMove3 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-50px, -30px) rotate(120deg); }
+            66% { transform: translate(50px, 20px) rotate(240deg); }
+        }
+
+        /* Container */
+        .deck-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Slides */
+        .slides-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .slide h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #d4849b, #e8a0b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .slide h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--gold);
+            text-align: center;
+            border-bottom: 3px solid var(--gold);
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+
+        .slide h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--teal);
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .slide-subtitle {
+            font-size: 1.3em;
+            color: var(--text-dim);
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .slide-content {
+            font-size: 1.1em;
+            line-height: 1.8;
+            max-width: 900px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Glass morphism cards */
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(212, 132, 155, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px auto;
+            max-width: 700px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(212, 132, 155, 0.3), inset 0 0 20px rgba(212, 132, 155, 0.1);
+        }
+
+        .card-content {
+            text-align: left;
+        }
+
+        .card-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .card-list li {
+            margin: 15px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .card-list li:before {
+            content: "▸";
+            color: var(--gold);
+            position: absolute;
+            left: 0;
+            font-size: 1.5em;
+        }
+
+        /* Tap to reveal */
+        .reveal-box {
+            background: rgba(232, 67, 147, 0.1);
+            border: 2px dashed var(--rose);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 700px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reveal-box:hover {
+            background: rgba(232, 67, 147, 0.2);
+            border-color: var(--rose);
+            box-shadow: 0 0 20px rgba(232, 67, 147, 0.3);
+        }
+
+        .reveal-box.revealed {
+            background: rgba(38, 198, 218, 0.1);
+            border-color: var(--teal);
+        }
+
+        .reveal-question {
+            color: var(--rose);
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .reveal-answer {
+            color: var(--teal);
+            margin-top: 15px;
+            font-size: 1.05em;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .reveal-box.revealed .reveal-answer {
+            display: block;
+        }
+
+        /* Accordion */
+        .accordion {
+            margin: 20px auto;
+            max-width: 700px;
+        }
+
+        .accordion-item {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(212, 132, 155, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-header {
+            padding: 15px 20px;
+            cursor: pointer;
+            background: rgba(212, 132, 155, 0.1);
+            color: var(--gold);
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(212, 132, 155, 0.2);
+            color: var(--gold);
+        }
+
+        .accordion-header::after {
+            content: "▼";
+            transition: transform 0.3s ease;
+            color: var(--gold);
+        }
+
+        .accordion-item.active .accordion-header::after {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 500px;
+            padding: 15px 20px;
+        }
+
+        .accordion-text {
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        /* Quiz */
+        .quiz-container {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .quiz-question {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(38, 198, 218, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .quiz-question-text {
+            color: var(--teal);
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .quiz-options {
+            list-style: none;
+        }
+
+        .quiz-option {
+            background: rgba(212, 132, 155, 0.05);
+            border: 2px solid rgba(212, 132, 155, 0.2);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .quiz-option:hover {
+            background: rgba(212, 132, 155, 0.15);
+            border-color: var(--gold);
+        }
+
+        .quiz-option input {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .quiz-option.correct {
+            background: rgba(38, 198, 218, 0.3);
+            border-color: var(--teal);
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(232, 67, 147, 0.3);
+            border-color: var(--rose);
+        }
+
+        .quiz-feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 700;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .quiz-feedback.correct {
+            background: rgba(38, 198, 218, 0.2);
+            color: var(--teal);
+        }
+
+        .quiz-feedback.incorrect {
+            background: rgba(232, 67, 147, 0.2);
+            color: var(--rose);
+        }
+
+        /* Comparison table */
+        .comparison-table {
+            width: 100%;
+            max-width: 700px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid rgba(212, 132, 155, 0.3);
+        }
+
+        .comparison-table th {
+            background: rgba(212, 132, 155, 0.2);
+            border-bottom: 2px solid rgba(212, 132, 155, 0.3);
+            color: var(--gold);
+            font-weight: 700;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(212, 132, 155, 0.1);
+            color: var(--text);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: rgba(212, 132, 155, 0.05);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .timeline-item {
+            margin-bottom: 30px;
+            padding-left: 60px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: 15px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: var(--gold);
+            border: 3px solid var(--bg);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--gold);
+        }
+
+        .timeline-item::after {
+            content: "";
+            position: absolute;
+            left: 24px;
+            top: 20px;
+            width: 2px;
+            height: calc(100% + 10px);
+            background: linear-gradient(to bottom, var(--gold), transparent);
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        .timeline-date {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 0.95em;
+        }
+
+        .timeline-text {
+            color: var(--text);
+            margin-top: 5px;
+            font-size: 0.95em;
+        }
+
+        /* Navigation */
+        .nav-bottom {
+            position: relative;
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(13, 6, 24, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid rgba(212, 132, 155, 0.2);
+        }
+
+        .nav-arrow {
+            background: rgba(212, 132, 155, 0.2);
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            transition: all 0.3s ease;
+        }
+
+        .nav-arrow:hover {
+            background: var(--gold);
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(212, 132, 155, 0.6);
+        }
+
+        .nav-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-dots {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(212, 132, 155, 0.3);
+            border: 2px solid var(--gold);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: var(--gold);
+            box-shadow: 0 0 15px var(--gold);
+            transform: scale(1.2);
+        }
+
+        .slide-counter {
+            color: var(--gold);
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--teal));
+            z-index: 30;
+            transition: width 0.6s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 40px 20px;
+            }
+
+            .slide h1 {
+                font-size: 2.2em;
+            }
+
+            .slide h2 {
+                font-size: 1.8em;
+            }
+
+            .slide-content {
+                font-size: 1em;
+            }
+
+            .nav-bottom {
+                padding: 15px 20px;
+            }
+
+            .nav-arrow {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2em;
+            }
+
+            .comparison-table {
+                font-size: 0.9em;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px;
+            }
+
+            .timeline-item {
+                padding-left: 40px;
+            }
+
+            .timeline-item::before {
+                left: 5px;
+                width: 16px;
+                height: 16px;
+            }
+
+            .timeline-item::after {
+                left: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle background -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Blob decorations -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <!-- Main container -->
+    <div class="deck-container">
+        <!-- Progress bar -->
+        <div class="progress-bar" id="progressBar"></div>
+
+        <!-- Slides -->
+        <div class="slides-wrapper">
+            <!-- SLIDE 1: Title -->
+            <div class="slide active">
+                <h1>Das Antike Rom</h1>
+                <p style="font-size: 1.5em; color: var(--gold); margin: 20px 0;">Aufstieg und Fall eines Weltreichs</p>
+                <p class="slide-subtitle">Ein interaktiver Lernguide für Zeitreisende</p>
+            </div>
+
+            <!-- SLIDE 2: Der Gründungsmythos -->
+            <div class="slide">
+                <h2>Der Gründungsmythos</h2>
+                <div class="card">
+                    <div class="card-content">
+                        <p style="margin-bottom: 15px;">Romulus und Remus waren Zwillinge, Söhne des Kriegsgottes Mars. Eine Wölfin rettete und zog sie auf. Romulus tötete seinen Bruder Remus im Streit und gründete die Stadt Rom im Jahr 753 v. Chr.</p>
+                    </div>
+                </div>
+                <div class="reveal-box" onclick="toggleReveal(this)">
+                    <div class="reveal-question">Tippen zum Aufdecken: Warum erzählten die Römer diese Geschichte?</div>
+                    <div class="reveal-answer">Sie wollten zeigen, dass sie von Göttern abstammen — das machte sie stolz und stark.</div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: Archäologische Fakten -->
+            <div class="slide">
+                <h2>Die archäologischen Fakten</h2>
+                <div class="card">
+                    <div class="card-content">
+                        <p style="margin-bottom: 20px;">Archäologen fanden nicht die Spuren von Göttern, sondern einfache Lehmhütten auf Hügeln am Fluss Tiber. Bauern und Hirten siedelten dort wegen der strategischen Lage — gut für Handel und Verteidigung.</p>
+                    </div>
+                </div>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Mythos</th>
+                            <th>Archäologische Fakten</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Göttliche Abstammung</td>
+                            <td>Einfache Bauern</td>
+                        </tr>
+                        <tr>
+                            <td>Übernatürliche Stärke</td>
+                            <td>Strategische Lage am Tiber</td>
+                        </tr>
+                        <tr>
+                            <td>Glanz und Pracht</td>
+                            <td>Lehmhütten und Handwerk</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- SLIDE 4: Die Gesellschaftspyramide -->
+            <div class="slide">
+                <h2>Die Gesellschaftspyramide</h2>
+                <div class="accordion">
+                    <div class="accordion-item active">
+                        <div class="accordion-header">Patrizier (oben)</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Der Adel. Reiche Landbesitzer, die anfangs die gesamte politische Macht hatten. Sie kontrollierten den Senat und die Regierung.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">Plebejer (Mitte)</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Das einfache Volk. Bauern, Handwerker, Händler. Sie mussten in den Krieg ziehen, durften aber lange nicht mitbestimmen.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">Sklaven (unten)</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Kriegsgefangene ohne Rechte. Sie waren das Eigentum anderer Menschen und mussten alle Arbeiten verrichten.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: Was ist eine Republik? -->
+            <div class="slide">
+                <h2>Was ist eine Republik?</h2>
+                <div class="card">
+                    <div class="card-content">
+                        <p style="margin-bottom: 20px;">Eine Staatsform, in der das Volk (oder Teile davon) die Regierung wählt. Kein König!</p>
+                        <h3>Die wichtigsten Organe:</h3>
+                    </div>
+                </div>
+                <div class="card">
+                    <ul class="card-list">
+                        <li><strong>Senat:</strong> 300 Patrizier. Die echten Machthaber. Sie beraten, kontrollieren die Finanzen und leiten die Politik.</li>
+                        <li><strong>Volksversammlungen:</strong> Wählen die Beamten und stimmen über Gesetze ab.</li>
+                        <li><strong>Konsuln:</strong> Die zwei höchsten Führer (Regierungschefs) in Krieg und Frieden.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: Anti-Diktator-System -->
+            <div class="slide">
+                <h2>Das Anti-Diktator-System</h2>
+                <p class="slide-content" style="margin-top: 20px;">Drei clevere Sicherungen gegen Tyrannen:</p>
+                <div class="accordion">
+                    <div class="accordion-item active">
+                        <div class="accordion-header">1. Kollegialität</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Alle Ämter werden mindestens doppelt besetzt. Man muss zusammenarbeiten, sonst kann man nichts entscheiden!</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">2. Annuität</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Die Macht ist streng auf nur ein Jahr begrenzt. Danach ist man wieder normaler Bürger. Keine Chance, sich festzusetzen!</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">3. Veto-Recht</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Ein Kollege konnte Entscheidungen des anderen jederzeit blockieren. "Ich verbiete!" Das war das Veto.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal-box" onclick="toggleReveal(this)" style="margin-top: 25px;">
+                    <div class="reveal-question">Mini-Quiz: Welches Prinzip bedeutet, dass man nur EIN Jahr regieren darf?</div>
+                    <div class="reveal-answer">Annuität — die Begrenzung der Amtszeit auf genau ein Jahr.</div>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: Die Standeskämpfe -->
+            <div class="slide">
+                <h2>Die Standeskämpfe</h2>
+                <div class="card">
+                    <div class="card-content">
+                        <p style="margin-bottom: 15px;"><strong>Das Problem:</strong> Plebejer mussten kämpfen, hatten aber nichts zu sagen.</p>
+                        <p style="margin-bottom: 15px;"><strong>Die Waffe der Plebejer:</strong> Der Auszug aus der Stadt (Streik). Ohne sie gibt es keine Armee und kein Essen!</p>
+                        <p style="margin-bottom: 15px;"><strong>Das Resultat:</strong> Die Patrizier geben nach. Die Plebejer bekommen eigene Beamte (Volkstribunen) mit Veto-Recht!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 8: Der Cursus Honorum -->
+            <div class="slide">
+                <h2>Der Cursus Honorum</h2>
+                <p class="slide-content">Die feste Ämterlaufbahn — man muss jede Stufe nacheinander nehmen:</p>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">Stufe 1</div>
+                        <div class="timeline-text">Quästor (Finanzen)</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Stufe 2</div>
+                        <div class="timeline-text">Ädil (Spiele & Polizei)</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Stufe 3</div>
+                        <div class="timeline-text">Prätor (Richter)</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Stufe 4</div>
+                        <div class="timeline-text">Konsul (Regierungschef)</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <p><strong>Der "Homo Novus":</strong> Jemand, der als Erster aus seiner Familie Konsul wird. Extrem selten und von den Patriziern oft verachtet!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 9: Demokratie-Check -->
+            <div class="slide">
+                <h2>Demokratie-Check</h2>
+                <p class="slide-content">War Rom wirklich eine Demokratie? Vergleich mit der modernen Schweiz:</p>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Frage</th>
+                            <th>Rom</th>
+                            <th>Schweiz</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Wer darf wählen?</td>
+                            <td>Nur männliche Bürger</td>
+                            <td>Alle erwachsenen Bürger</td>
+                        </tr>
+                        <tr>
+                            <td>Gewaltenteilung?</td>
+                            <td>Ja</td>
+                            <td>Ja</td>
+                        </tr>
+                        <tr>
+                            <td>Gleichheit der Stimmen?</td>
+                            <td>Nein, Reiche zählten mehr</td>
+                            <td>Ja, one person, one vote</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="card" style="margin-top: 25px;">
+                    <div class="card-content">
+                        <p><strong>Fazit:</strong> Rom war keine echte Demokratie, sondern eher eine Aristokratie oder Oligarchie — die Herrschaft der reichen Adelsfamilien.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 10: Die Punischen Kriege -->
+            <div class="slide">
+                <h2>Die Punischen Kriege</h2>
+                <div class="card">
+                    <div class="card-content">
+                        <p style="margin-bottom: 15px;">Rom vs. Karthago — ein epischer Kampf um das westliche Mittelmeer.</p>
+                        <p style="margin-bottom: 15px;">Drei grosse Kriege. Karthagos General Hannibal überquerte sogar die Alpen mit Elefanten!</p>
+                        <p>Am Ende zerstörte Rom Karthago komplett und wurde zur unangefochtenen Supermacht.</p>
+                    </div>
+                </div>
+                <div class="reveal-box" onclick="toggleReveal(this)">
+                    <div class="reveal-question">Tippen zum Aufdecken: Warum waren die Punischen Kriege so wichtig?</div>
+                    <div class="reveal-answer">Sie machten Rom zur Supermacht des Mittelmeerraums. Nach diesen Kriegen konnte Rom alles beherrschen, was es wollte.</div>
+                </div>
+            </div>
+
+            <!-- SLIDE 11: Romanisierung -->
+            <div class="slide">
+                <h2>Romanisierung — Das antike Copy & Paste</h2>
+                <div class="card">
+                    <div class="card-content">
+                        <p style="margin-bottom: 20px;">Rom bringt Strassen, fliessendes Wasser, Bäder und Sicherheit in eroberte Gebiete.</p>
+                        <p style="margin-bottom: 15px;"><strong>Vorher:</strong> Lokale Kultur und Sprache.</p>
+                        <p style="margin-bottom: 15px;"><strong>Nachher:</strong> Eroberte Völker übernehmen freiwillig die Sprache (Latein), die Kultur und die Technik der Römer, weil es Vorteile bringt!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 12: Der Preis des Sieges -->
+            <div class="slide">
+                <h2>Der Preis des Sieges</h2>
+                <div class="accordion">
+                    <div class="accordion-item active">
+                        <div class="accordion-header">Die Reichen</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Senatoren werden durch Kriegsbeute extrem reich. Sie kaufen riesige Ländereien und lassen billige Sklaven arbeiten.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">Die armen Bauern</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Bauern sind jahrelang im Krieg. Ihre Höfe verfallen. Sie können nicht mit Sklavenarbeit konkurrieren, verlieren ihr Land und fliehen arbeitslos nach Rom.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">Das Problem</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Eine Armee aus besitzlosen, wütenden Männern, die nur noch ihrem General treu sind — nicht mehr dem Staat. Die Republik wackelt!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 13: Julius Caesar -->
+            <div class="slide">
+                <h2>Julius Caesar</h2>
+                <div class="accordion">
+                    <div class="accordion-item active">
+                        <div class="accordion-header">Der Aufstieg</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Brillanter Feldherr — erobert Gallien. Nutzt die soziale Krise: Seine Soldaten sind ihm treu, nicht dem Senat. Überschreitet mit seiner Armee den Fluss Rubikon (Bürgerkrieg!).</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">Der Fall</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Lässt sich zum Diktator auf Lebenszeit ernennen — bricht die wichtigste Regel Roms (Annuität)! Am 15. März 44 v. Chr. wird er von Senatoren mit 23 Dolchstichen ermordet, um die Republik zu retten.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 14: Augustus und das Prinzipat -->
+            <div class="slide">
+                <h2>Augustus und das Prinzipat</h2>
+                <div class="card">
+                    <div class="card-content">
+                        <p style="margin-bottom: 15px;"><strong>Die Lektion aus Caesars Tod:</strong> Augustus wusste — wer sich König oder Diktator nennt, wird ermordet.</p>
+                        <p style="margin-bottom: 15px;"><strong>Der Trick:</strong> Er behauptet: "Ich habe die Republik wiederhergestellt!" Er lässt den Senat und die Konsuln bestehen.</p>
+                        <p><strong>Die Realität:</strong> Er nennt sich nur Princeps (Erster unter Gleichen), kontrolliert aber das Militär und die Kassen. Die Republik ist tot. Die Kaiserzeit beginnt.</p>
+                    </div>
+                </div>
+                <div class="reveal-box" onclick="toggleReveal(this)">
+                    <div class="reveal-question">Mini-Quiz: Was war der clevere Trick von Augustus?</div>
+                    <div class="reveal-answer">Er tat so, als würde die Republik noch existieren, obwohl er die gesamte Macht hatte. So konnte er nicht ermordet werden!</div>
+                </div>
+            </div>
+
+            <!-- SLIDE 15: Christentum vs. Römische Götter -->
+            <div class="slide">
+                <h2>Christentum vs. Römische Götter</h2>
+                <div class="accordion">
+                    <div class="accordion-item active">
+                        <div class="accordion-header">Römische Religion</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Polytheismus (viele Götter). Religion ist eine Staatsaufgabe. Man opfert, damit die Götter Rom beschützen. Der Kaiser wird als Gott verehrt.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">Christentum</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Monotheismus (nur ein Gott). Entstand in der römischen Provinz Judäa. Religion ist persönlicher Glaube. Alle Menschen (auch Sklaven) sind vor Gott gleich.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 16: Christenverfolgung -->
+            <div class="slide">
+                <h2>Christenverfolgung</h2>
+                <div class="card">
+                    <div class="card-content">
+                        <p style="margin-bottom: 15px;">Es war ein <strong>politisches Problem</strong>, nicht nur ein religiöses!</p>
+                        <p style="margin-bottom: 15px;">Weil Christen den Kaiserkult verweigerten (sie durften nur ihrem einen Gott opfern), galten sie als Staatsfeinde.</p>
+                        <p>Sie wurden grausam verfolgt — zum Beispiel in der Arena.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 17: Das Reich wird krank -->
+            <div class="slide">
+                <h2>Das Reich wird krank — innere Probleme</h2>
+                <p class="slide-content" style="margin-bottom: 20px;">Vier Gründe für den Niedergang:</p>
+                <div class="accordion">
+                    <div class="accordion-item active">
+                        <div class="accordion-header">1. Schwaches Militär</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Römer wollen nicht mehr kämpfen. Das Heer besteht aus ausländischen Söldnern, die wenig loyal sind.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">2. Machtkämpfe</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Ständige Bürgerkriege. Generäle töten sich gegenseitig, um Kaiser zu werden.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">3. Wirtschaft & Finanzen</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Zu hohe Steuern, Inflation, Handel bricht zusammen.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">4. Moral</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Die alte römische Disziplin und der Einsatz für den Staat verschwinden.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 25px;">
+                    <div class="card-content">
+                        <p>Rom war im 5. Jahrhundert innerlich so schwach, dass ein leichter Stoss von aussen reichte.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 18: Die Völkerwanderung -->
+            <div class="slide">
+                <h2>Die Völkerwanderung</h2>
+                <p class="slide-content" style="margin-bottom: 20px;">Der Domino-Effekt:</p>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">1.</div>
+                        <div class="timeline-text">Die Hunnen (Reitervolk aus Asien) brechen in Osteuropa ein</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2.</div>
+                        <div class="timeline-text">Die germanischen Stämme (Goten, Vandalen) fliehen in Panik vor den Hunnen nach Westen</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">3.</div>
+                        <div class="timeline-text">Millionen Flüchtlinge und Krieger drücken auf die Grenzen des schwachen Römischen Reiches</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">4.</div>
+                        <div class="timeline-text">Die Grenze bricht!</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 19: 476 n.Chr. Der Untergang Westroms -->
+            <div class="slide">
+                <h2>476 n. Chr. — Der Untergang Westroms</h2>
+                <div class="accordion">
+                    <div class="accordion-item active">
+                        <div class="accordion-header">Das Ereignis</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Der germanische Söldnerführer Odoaker setzt den letzten weströmischen Kaiser (Romulus Augustulus) ab.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">Der Grund</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Ein Mix aus innerer Fäulnis (Wirtschaft, Politik) und dem Druck von aussen (Völkerwanderung). Der perfekte Sturm.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">Das Ende</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Es gibt keinen neuen weströmischen Kaiser mehr. Das antike Weltreich im Westen ist Geschichte. Das Mittelalter beginnt!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 20: Methoden — Wie arbeiten Historiker? -->
+            <div class="slide">
+                <h2>Methoden — Wie arbeiten Historiker?</h2>
+                <div class="accordion">
+                    <div class="accordion-item active">
+                        <div class="accordion-header">Geschichtskarten analysieren</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Karten zeigen nicht nur Orte, sondern auch Entwicklungen. Wie gross war das Reich? Wo verliefen Handelsrouten? Achte immer auf die Legende!</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <div class="accordion-header">Historische Quellen interpretieren</div>
+                        <div class="accordion-content">
+                            <div class="accordion-text">Texte aus der Vergangenheit (Briefe, Gesetze) sind wie Zeugenaussagen. Wir müssen fragen: Wer hat das geschrieben? Warum? Können wir dem Autor vertrauen?</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 21: Grosses Quiz -->
+            <div class="slide">
+                <h2>Grosses Quiz — 10 Fragen</h2>
+                <div class="quiz-container" id="quizContainer"></div>
+                <div id="quizResults" style="display: none; margin-top: 20px;">
+                    <div class="card">
+                        <div class="card-content">
+                            <p style="font-size: 1.2em; color: var(--gold); margin-bottom: 10px;" id="resultsText"></p>
+                            <p style="font-size: 1em;" id="feedbackText"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 22: Timeline Zusammenfassung -->
+            <div class="slide">
+                <h2>Zusammenfassung — Die große Timeline</h2>
+                <div class="timeline" style="max-height: 500px; overflow-y: auto;">
+                    <div class="timeline-item">
+                        <div class="timeline-date">753 v. Chr.</div>
+                        <div class="timeline-text">Gründung Roms (der Sage nach)</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">509 v. Chr.</div>
+                        <div class="timeline-text">Ende der Königszeit, Gründung der Republik</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">390 v. Chr.</div>
+                        <div class="timeline-text">Gallier plündern Rom</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">264–146 v. Chr.</div>
+                        <div class="timeline-text">Die Punischen Kriege gegen Karthago</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">100 v. Chr.</div>
+                        <div class="timeline-text">Geburt von Julius Caesar</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">49–48 v. Chr.</div>
+                        <div class="timeline-text">Bürgerkrieg zwischen Caesar und dem Senat</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">44 v. Chr.</div>
+                        <div class="timeline-text">Ermordung von Julius Caesar</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">31 v. Chr.</div>
+                        <div class="timeline-text">Augustus wird alleiniger Herrscher</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">0/1 n. Chr.</div>
+                        <div class="timeline-text">Geburt von Jesus Christus (Zeitwende)</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">313 n. Chr.</div>
+                        <div class="timeline-text">Christentum wird Staatsreligion</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">395 n. Chr.</div>
+                        <div class="timeline-text">Reich wird in Ost- und Weströmisches Reich aufgeteilt</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">476 n. Chr.</div>
+                        <div class="timeline-text">Fall des Weströmischen Reiches</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-bottom">
+            <button class="nav-arrow" id="prevBtn" onclick="previousSlide()">‹</button>
+            <div class="nav-dots" id="dotsContainer"></div>
+            <button class="nav-arrow" id="nextBtn" onclick="nextSlide()">›</button>
+            <div class="slide-counter" id="slideCounter">1 / 22</div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data
+        const quizData = [
+            {
+                question: "Wer gründete der Sage nach die Stadt Rom?",
+                options: ["Augustus", "Romulus", "Caesar", "Hannibal"],
+                correct: 1
+            },
+            {
+                question: "Was fanden Archäologen wirklich bei der Gründung Roms?",
+                options: ["Einen Tempel", "Lehmhütten", "Eine Festung", "Gold"],
+                correct: 1
+            },
+            {
+                question: "Welche Gruppe hatte in der Republik anfangs ALLE politische Macht?",
+                options: ["Sklaven", "Plebejer", "Patrizier", "Soldaten"],
+                correct: 2
+            },
+            {
+                question: "Was bedeutet 'Annuität'?",
+                options: ["Doppelbesetzung", "Veto-Recht", "Amtszeit von einem Jahr", "Wahl durch das Volk"],
+                correct: 2
+            },
+            {
+                question: "Wie protestierten die Plebejer bei den Standeskämpfen?",
+                options: ["Sie brannten den Senat nieder", "Sie verliessen die Stadt", "Sie wählten einen König", "Sie töteten die Konsuln"],
+                correct: 1
+            },
+            {
+                question: "Gegen wen kämpfte Rom in den Punischen Kriegen?",
+                options: ["Griechenland", "Ägypten", "Karthago", "Persien"],
+                correct: 2
+            },
+            {
+                question: "Was war der 'clevere Trick' von Augustus?",
+                options: ["Er wurde König", "Er tat so, als existiere die Republik noch", "Er floh nach Ägypten", "Er teilte das Reich"],
+                correct: 1
+            },
+            {
+                question: "Warum wurden Christen verfolgt?",
+                options: ["Sie waren Diebe", "Sie verweigerten den Kaiserkult", "Sie waren Ausländer", "Sie waren Soldaten"],
+                correct: 1
+            },
+            {
+                question: "Was löste die Völkerwanderung aus?",
+                options: ["Ein Erdbeben", "Eine Flut", "Das Vordringen der Hunnen", "Ein Vulkan"],
+                correct: 2
+            },
+            {
+                question: "Wann fiel das Weströmische Reich?",
+                options: ["44 v. Chr.", "476 n. Chr.", "753 v. Chr.", "313 n. Chr."],
+                correct: 1
+            }
+        ];
+
+        let currentSlide = 0;
+        const totalSlides = 22;
+        let quizAnswers = [];
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            createDots();
+            updateSlide();
+            initializeQuiz();
+            setupKeyboardNavigation();
+            setupTouchNavigation();
+        });
+
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDuration = (5 + Math.random() * 15) + 's';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                particle.style.animation = `float ${5 + Math.random() * 15}s linear ${Math.random() * 2}s infinite`;
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Create navigation dots
+        function createDots() {
+            const dotsContainer = document.getElementById('dotsContainer');
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot' + (i === 0 ? ' active' : '');
+                dot.onclick = () => goToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        // Update slide display
+        function updateSlide() {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+
+            // Update dots
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('active');
+                if (index === currentSlide) {
+                    dot.classList.add('active');
+                }
+            });
+
+            // Update counter
+            document.getElementById('slideCounter').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+
+            // Update progress bar
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        // Navigation functions
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        function goToSlide(n) {
+            currentSlide = n;
+            updateSlide();
+        }
+
+        // Keyboard navigation
+        function setupKeyboardNavigation() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') nextSlide();
+                if (e.key === 'ArrowLeft') previousSlide();
+            });
+        }
+
+        // Touch/Swipe navigation
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function setupTouchNavigation() {
+            document.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+
+            document.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+        }
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            if (touchStartX - touchEndX > swipeThreshold) {
+                nextSlide();
+            } else if (touchEndX - touchStartX > swipeThreshold) {
+                previousSlide();
+            }
+        }
+
+        // Reveal box toggle
+        function toggleReveal(element) {
+            element.classList.toggle('revealed');
+        }
+
+        // Accordion functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const item = this.parentElement;
+                    const isActive = item.classList.contains('active');
+
+                    // Close all items in the same accordion
+                    const accordion = item.parentElement;
+                    accordion.querySelectorAll('.accordion-item').forEach(accordionItem => {
+                        accordionItem.classList.remove('active');
+                    });
+
+                    // Open clicked item if it wasn't active
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Initialize Quiz
+        function initializeQuiz() {
+            const quizSlideIndex = 20; // Slide 21 is index 20
+            if (currentSlide === quizSlideIndex) {
+                renderQuiz();
+            }
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('quizContainer');
+            if (container.innerHTML !== '') return; // Already rendered
+
+            container.innerHTML = '';
+            quizData.forEach((quiz, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'quiz-question';
+                questionDiv.innerHTML = `
+                    <div class="quiz-question-text">${index + 1}. ${quiz.question}</div>
+                    <ul class="quiz-options">
+                        ${quiz.options.map((option, optIndex) => `
+                            <li class="quiz-option">
+                                <input type="radio" name="quiz${index}" value="${optIndex}" id="q${index}o${optIndex}" onchange="checkAnswer(${index}, ${optIndex})">
+                                <label for="q${index}o${optIndex}" style="cursor: pointer; flex: 1;">${option}</label>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <div class="quiz-feedback" id="feedback${index}"></div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function checkAnswer(questionIndex, selectedIndex) {
+            const correct = quizData[questionIndex].correct === selectedIndex;
+            const feedback = document.getElementById(`feedback${questionIndex}`);
+            const options = document.querySelectorAll(`input[name="quiz${questionIndex}"]`).forEach((input, index) => {
+                const label = input.parentElement;
+                label.classList.remove('correct', 'incorrect');
+                if (index === quizData[questionIndex].correct) {
+                    label.classList.add('correct');
+                } else if (index === selectedIndex && !correct) {
+                    label.classList.add('incorrect');
+                }
+            });
+
+            feedback.classList.add('show');
+            if (correct) {
+                feedback.classList.add('correct');
+                feedback.classList.remove('incorrect');
+                feedback.textContent = '✓ Richtig! Sehr gut!';
+                quizAnswers[questionIndex] = true;
+            } else {
+                feedback.classList.add('incorrect');
+                feedback.classList.remove('correct');
+                feedback.textContent = '✗ Leider falsch. Die richtige Antwort ist: ' + quizData[questionIndex].options[quizData[questionIndex].correct];
+                quizAnswers[questionIndex] = false;
+            }
+
+            checkQuizCompletion();
+        }
+
+        function checkQuizCompletion() {
+            if (quizAnswers.length === quizData.length) {
+                const correct = quizAnswers.filter(a => a === true).length;
+                const percentage = Math.round((correct / quizData.length) * 100);
+
+                const resultsDiv = document.getElementById('quizResults');
+                const resultsText = document.getElementById('resultsText');
+                const feedbackText = document.getElementById('feedbackText');
+
+                resultsDiv.style.display = 'block';
+                resultsText.textContent = `Dein Ergebnis: ${correct} / ${quizData.length} (${percentage}%)`;
+
+                if (percentage >= 90) {
+                    feedbackText.textContent = 'Ausgezeichnet! Du bist ein Rom-Experte! 🏛️';
+                } else if (percentage >= 70) {
+                    feedbackText.textContent = 'Sehr gut! Du hast viel über Rom gelernt!';
+                } else if (percentage >= 50) {
+                    feedbackText.textContent = 'Gute Leistung! Schaue dir noch einmal die Slides an.';
+                } else {
+                    feedbackText.textContent = 'Viel Spass beim Lernen! Versuche es noch einmal!';
+                }
+            }
+        }
+
+        // Watch for slide changes to render quiz when reaching slide 21
+        const observer = new MutationObserver(() => {
+            if (currentSlide === 20 && document.getElementById('quizContainer').innerHTML === '') {
+                renderQuiz();
+            }
+        });
+
+        observer.observe(document.querySelector('.slides-wrapper'), {
+            childList: true,
+            subtree: true
+        });
+    </script>
+</body>
+</html>
