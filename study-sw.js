@@ -1,5 +1,5 @@
-const CACHE='elia-study-offline-v1';
-const FILES=['geometry-exam.html','index.html','learning-engine.js','salon-progress.js','salon-progress.css','progress-merge.js','sync-crypto.js','device-sync.js','study.webmanifest','study-icon.svg'];
+const CACHE='elia-study-offline-v2';
+const FILES=['geometry-exam.html','index.html','learning-engine.js','salon-progress.js','salon-progress.css','progress-merge.js','sync-crypto.js','device-sync.js','pairing-qr.js','vendor/qrcode-generator-1.4.4.js','study.webmanifest','study-icon.svg'];
 const urls=FILES.map(f=>new URL(f,self.registration.scope).href);
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(urls)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('elia-study-offline-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
