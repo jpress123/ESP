@@ -8,7 +8,7 @@ function record(s,{id,topic,focus,ok,independent,source,answer,solution}){
  if(!topics.includes(topic))return;
  const old=s.records[id]||{};
  s.records[id]={topic,focus,secure:!!(ok&&independent),attempts:(old.attempts||0)+1,at:Date.now()};
- if(!ok||!independent){if(!s.reviews.some(r=>r.id===id))s.reviews.push({id,topic,focus});}
+ if(!ok||!independent){const review=s.reviews.find(r=>r.id===id);if(review)review.at=s.records[id].at;else s.reviews.push({id,topic,focus,at:s.records[id].at});}
  else{s.reviews=s.reviews.filter(r=>!(r.topic===topic&&r.focus===focus&&r.id!==id));}
  s.events.unshift({id,topic,focus,ok:!!ok,independent:!!independent,source,answer:String(answer).slice(0,60),solution,at:Date.now()});s.events=s.events.slice(0,40);
 }

@@ -1,0 +1,6 @@
+const CACHE='elia-study-offline-v1';
+const FILES=['geometry-exam.html','index.html','learning-engine.js','salon-progress.js','salon-progress.css','progress-merge.js','sync-crypto.js','device-sync.js','study.webmanifest','study-icon.svg'];
+const urls=FILES.map(f=>new URL(f,self.registration.scope).href);
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(urls)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('elia-study-offline-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==self.location.origin)return;u.search='';u.hash='';if(!urls.includes(u.href))return;e.respondWith((async()=>{const cache=await caches.open(CACHE);try{const response=await fetch(e.request,{signal:AbortSignal.timeout(3000)});if(response.ok)await cache.put(u.href,response.clone());if(response.ok)return response;const saved=await cache.match(u.href);return saved||response}catch{const saved=await cache.match(u.href);return saved||new Response('Bitte öffne die Lernseite einmal mit Internet.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}})}})())});
