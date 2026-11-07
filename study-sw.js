@@ -1,5 +1,7 @@
-const CACHE='elia-study-offline-v2';
+const CACHE='elia-study-offline-v3';
 const FILES=['geometry-exam.html','index.html','learning-engine.js','salon-progress.js','salon-progress.css','progress-merge.js','sync-crypto.js','device-sync.js','pairing-qr.js','vendor/qrcode-generator-1.4.4.js','study.webmanifest','study-icon.svg'];
+FILES.push('worksheet-checks.js','worksheet-exam.js');
+[5,20,23,17].forEach((count,s)=>{for(let n=1;n<=count;n++)FILES.push('arbeitsblaetter/'+s+'-'+n+'.json')});
 const urls=FILES.map(f=>new URL(f,self.registration.scope).href);
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(urls)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('elia-study-offline-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
