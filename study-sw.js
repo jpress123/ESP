@@ -1,4 +1,4 @@
-const CACHE='elia-study-offline-v3';
+const CACHE='elia-study-offline-v4';
 const FILES=['geometry-exam.html','index.html','learning-engine.js','salon-progress.js','salon-progress.css','progress-merge.js','sync-crypto.js','device-sync.js','pairing-qr.js','vendor/qrcode-generator-1.4.4.js','study.webmanifest','study-icon.svg'];
 FILES.push('worksheet-checks.js','worksheet-exam.js');
 [5,20,23,17].forEach((count,s)=>{for(let n=1;n<=count;n++)FILES.push('arbeitsblaetter/'+s+'-'+n+'.json')});
