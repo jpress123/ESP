@@ -15,6 +15,7 @@ function show(){
  work.innerHTML='<small>'+(exam?'Probeprüfung':'Training')+' · '+(step+1)+'/4 · '+labels[i]+'</small><h2 tabindex="-1">'+c.title+'</h2>'+
  (i===1?'<p>Höre die Fortsetzung. Notiere zuerst Personen, dann Ursache und Folge. Nutze deine Stichwörter für die Antwort.</p><audio controls src="hoertext-'+scene+'.m4a"></audio><label>Meine Hörnotizen<textarea id="notes"></textarea></label>':'<blockquote>'+c.read+'</blockquote>')+
  '<form><fieldset><legend>'+q[0]+'</legend>'+choices.map(k=>'<label><input required type="radio" name="answer" value="'+k+'"> '+q[k]+'</label>').join('')+'</fieldset><button>Antwort abgeben</button></form><div aria-live="polite" id="reply"></div>';
+ work.insertAdjacentHTML('afterbegin','<progress aria-label="Fortschritt" max="4" value="'+(step+1)+'"></progress><div aria-hidden="true" class="szene '+(['raum','stimme','brief','klasse'][i])+'"></div>');
  work.querySelector('h2').focus();if(i===1)el('notes').oninput=e=>notes=e.target.value;
  work.querySelector('form').onsubmit=e=>{e.preventDefault();let k=Number(new FormData(e.target).get('answer'));answers[i]=k;if(k===1)saved[scene+'-'+i]=true;save();e.target.querySelector('fieldset').disabled=true;e.target.querySelector('button').disabled=true;
  el('reply').innerHTML=(exam?'':'<p class="feedback">'+(k===1?'Richtig. ':'Schau noch einmal hin. ')+q[4]+'</p>')+'<button id="next">'+(step===3?'Auswertung öffnen':'Weiter')+'</button>';el('next').onclick=()=>{if(++step===4)finish();else show()};if(!exam)score();el('next').focus()}
