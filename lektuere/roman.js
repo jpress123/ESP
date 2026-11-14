@@ -23,28 +23,57 @@ function pick(s,count,avoid=[]){let pool=s===2?bankC.map(o=>make(s,o.n,o.k)):s==
  const used=new Set(avoid);let recent=new Set(history.slice(-30).map(r=>r.id));return shuffle(pool).filter(q=>!used.has(q.id)).sort((a,b)=>Number(recent.has(a.id))-Number(recent.has(b.id))).slice(0,count)}
 function begin(p,m){window.speechSynthesis?.cancel();plan=p;rows=[];level=1;streak=miss=0;mode=m;show()}
 $('chapter').innerHTML=kapitel.map(c=>'<option value="'+c.n+'">'+ref(c.n)+'</option>').join('');
-$('start').onclick=()=>begin([8,8,6,4,4].flatMap((n,s)=>pick(s,n)),'Probeprüfung');
-$('practice').onclick=()=>{const n=+$('chapter').value;begin([make(0,n),make(3,n)],'Kapiteltraining')};
+let letzteFragen=[];
+try{let daten=JSON.parse(localStorage.getItem('elia-fragenauswahl')||'[]');if(Array.isArray(daten))letzteFragen=daten}catch{}
+function quizStart(name,verteilung){
+ const zuletzt=n=>letzteFragen.lastIndexOf(n);
+ const verfuegbar=shuffle(kapitel.map(c=>c.n)).sort((a,b)=>zuletzt(a)-zuletzt(b));
+ const runde=[];
+ for(const [s,anzahl] of verteilung.entries()){
+  for(let i=0;i<anzahl;i++){
+   const pos=verfuegbar.findIndex(n=>s===2?bankC.some(c=>c.n===n):s===1?bPool.some(c=>c.n===n):s===4?n>1&&n<134:true);
+   const n=verfuegbar.splice(pos,1)[0];
+   const q=make(s,n,s===2?shuffle(bankC.filter(c=>c.n===n))[0].k:undefined);
+   q.detail=true;runde.push(q);
+  }
+ }
+ const neu=runde.map(q=>q.n);
+ letzteFragen=[...letzteFragen.filter(n=>!neu.includes(n)),...neu];
+ try{localStorage.setItem('elia-fragenauswahl',JSON.stringify(letzteFragen))}catch{}
+ begin(runde,name);
+}
+$('handlung').onclick=()=>quizStart('Handlung und Zusammenhänge',[15,3,2,6,4]);
+$('figuren').onclick=()=>quizStart('Figuren und Erzählweise',[3,12,8,3,4]);
+$('start').onclick=()=>quizStart('Probeprüfung',[8,8,6,4,4]);
+$('practice').onclick=()=>{const n=+$('chapter').value;begin([{...make(0,n),detail:true},make(3,n)],'Kapiteltraining')};
 function alternatives(n){return kapitel.filter(c=>Math.abs(c.n-n)>12)}
-function sceneAudio(n){const first=Math.max(1,n-3),last=Math.min(134,n+3);return kapitel.slice(first-1,last).map(c=>c.n===n?'Achte jetzt auf das folgende Detail. '+c.note:c.note).join(' ')}
-function options(q){const ns=shuffle(alternatives(q.n)).slice(0,2);return shuffle([item(q.n),...ns]).map(x=>'<label><input required type="radio" name="wahl" value="'+x.n+'"> '+x.note+'</label>').join('')}
-function show(){window.speechSynthesis?.cancel();const q=plan[rows.length],s=q.s,n=q.n,c=item(n);current={q,level};const choice=s===0||s===4||s===1&&level===0;
- const tf=s===0&&level===1&&rows.length%2===1;
+function sceneAudio(n){const first=Math.max(1,n-3),last=Math.min(134,n+3);return kapitel.slice(first-1,last).map(c=>c.n===n?'Achte jetzt auf das folgende Detail. '+c.note+' '+detailfragen[n-1][1]:c.note).join(' ')}
+function options(q){const ns=shuffle(alternatives(q.n)).slice(0,2);return shuffle([item(q.n),...ns]).map(x=>'<label><input required type="radio" name="wahl" value="'+x.n+'"> '+(q.detail?detailfragen[x.n-1][1]:x.note)+'</label>').join('')}
+function show(){window.speechSynthesis?.cancel();const q=plan[rows.length],s=q.s,n=q.n,c=item(n);const [detailfrage,detailantwort]=detailfragen[n-1];current={q,level};const choice=s===0||s===4||s===1&&level===0;
+ const tf=!q.detail&&s===0&&level===1&&rows.length%2===1;
  let prompt,answers='',model=c.note;
  if(tf){const truth=Math.random()<.5;current.correct=truth?'ja':'nein';const other=shuffle(alternatives(n))[0];const claim=truth?c.note:other.note;if(!truth)model+=' Die vorgelegte Aussage fasst '+ref(other.n)+' zusammen.';prompt='Gehört diese Aussage zu genau diesem Abschnitt? '+claim;answers='<label><input required type="radio" name="wahl" value="ja"> Ja</label><label><input required type="radio" name="wahl" value="nein"> Nein</label>'}
  else if(choice){current.correct=String(n);prompt=s===4?'Welche Aussage gehört zum ausdrücklich angekündigten Detail der Hörfolge?':s===1?'Welche Beobachtung passt zur Figur in diesem Abschnitt?':'Welche Aussage gibt diesen Abschnitt wieder?';answers=options(q)}
  else if(s===1){prompt='Was nimmt '+c.name+' wahr? Erkläre anhand einer Handlung, einer Geste oder eines Gedankens, welches Gefühl oder welche Absicht du vermutest.'}
  else if(s===2){const t=techniques[q.k];prompt=t[2];model+=' '+t[3]}
  else{prompt=level===0?'Welche Frage wirft diese Szene für dich auf? Begründe deine Antwort mit einem Detail.':'Wie beurteilst du die Sichtweise oder das Handeln in diesem Abschnitt? Entwickle eine Deutung und belege sie.'}
+ if(q.detail){
+  prompt=detailfrage;
+  model=detailantwort;
+  if(s===1&&level>0)prompt+=' Welche Haltung oder Gefühlslage lässt sich daran erkennen? Begründe deine Deutung.';
+  if(s===2){const t=techniques[q.k];prompt+=' '+t[2];model+=' '+t[3]}
+  if(s===3)prompt+=' Was bedeutet dieses Detail für deine Deutung der Szene?';
+  if(s===4)prompt+=' Antworte mithilfe deiner Hörnotizen.';
+ }
  const written=!choice||tf||level===2||s===4;
  if(s===0 && level===2)prompt+=' Erkläre, was diese Handlung auslöst oder vorbereitet.';
  if(level===2&&written)prompt+=' Prüfe auch eine andere mögliche Lesart oder Erklärung.';
  current.written=written;current.model=model;
  $('task').innerHTML='<small>'+mode+' · Frage '+(rows.length+1)+' von '+plan.length+' · '+levels[level]+'</small><h2 tabindex="-1">'+sections[s]+'</h2><p>'+ref(n)+'</p>'+(s===4?'<button id="speak">Hörfolge abspielen</button><details><summary>Textsimulation bei fehlender Sprachausgabe</summary><p>Einmal lesen, zuklappen und aus den Notizen antworten. Dabei wird das Hören nur eingeschränkt geprüft.</p><p>'+sceneAudio(n)+'</p></details><label>Hörnotizen: Ereignisfolge, Signal, Folge<textarea id="notes" required form="form"></textarea></label>':'')+'<form id="form"><fieldset><legend>'+prompt+'</legend>'+answers+(written?'<label>'+ (s===4?'Was ist die Hauptaussage? Welche Einzelheit in deinen Notizen stützt sie?':'Deine Begründung mit einem konkreten Textdetail')+'<textarea required id="text"></textarea></label>':'')+'</fieldset><details><summary>Hinweis</summary><p>'+['Trenne das Ereignis von seiner Folge. Prüfe, wer was weiss.','Suche zuerst etwas Beobachtbares. Begründe dann eine mögliche Bedeutung.','Vergleiche dein Wissen am Anfang und am Ende der Stelle.','Prüfe, ob jemand dieselbe Beobachtung anders erklären könnte.','Notiere für jeden Teil ein Stichwort. Achte auf das angekündigte Detail.'][s]+'</p></details><button>Antwort prüfen</button></form><div id="reply"></div>';
- $('task').insertAdjacentHTML('afterbegin','<progress aria-label="Prüfungsfortschritt" max="'+plan.length+'" value="'+(rows.length+1)+'"></progress><div aria-hidden="true" class="szene '+(['raum','klasse'][(n+rows.length)%2])+'"></div>');
+ $('task').insertAdjacentHTML('afterbegin','<progress aria-label="Prüfungsfortschritt" max="'+plan.length+'" value="'+(rows.length+1)+'"></progress>');
  $('task').querySelector('h2').focus();if(s===4)$('speak').onclick=()=>{if(!window.speechSynthesis){$('speak').nextElementSibling.open=true;return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(sceneAudio(n));u.lang='de-DE';u.rate=.9;u.onerror=e=>{if(e.error!=='interrupted'&&e.error!=='canceled'&&$('speak'))$('speak').nextElementSibling.open=true};speechSynthesis.speak(u)};
  $('form').onsubmit=e=>{e.preventDefault();const f=e.target;if(written&&!$('text').value.trim()||s===4&&!$('notes').value.trim())return;current.fact=current.correct===undefined?null:new FormData(f).get('wahl')===current.correct;f.querySelector('fieldset').disabled=true;f.querySelector('button').disabled=true;
- $('reply').innerHTML='<p class="note">'+(current.fact===false?'Die Auswahl passt hier nicht. ':current.fact===true?'Die Auswahl stimmt. ':'Vergleiche deine Deutung. ')+ref(n)+': '+model+'</p>'+(written?'<p>Beurteile deinen Text selbst. Auch eine andere nachvollziehbare Deutung zählt. Kleine Schreibfehler spielen keine Rolle.</p>'+['Inhalt: Meine Aussage passt zum Geschehen.','Begründung: Ich erkläre den Zusammenhang.','Beleg: Ich nenne ein konkretes, passendes Detail.'].map((x,i)=>'<label><input type="checkbox" id="r'+i+'"> '+x+'</label>').join(''):'')+'<button id="go">'+(written?'Einschätzung speichern':'Weiter')+'</button>';$('task').querySelector('.szene').outerHTML=szenenBild(n);$('go').insertAdjacentHTML('beforebegin',rueckblick(n));$('go').onclick=record;$('go').focus()}
+ $('reply').innerHTML='<p class="note">'+(current.fact===false?'Die Auswahl passt hier nicht. ':current.fact===true?'Die Auswahl stimmt. ':'Vergleiche deine Deutung. ')+ref(n)+': '+model+'</p>'+(written?'<p>Beurteile deinen Text selbst. Auch eine andere nachvollziehbare Deutung zählt. Kleine Schreibfehler spielen keine Rolle.</p>'+['Inhalt: Meine Aussage passt zum Geschehen.','Begründung: Ich erkläre den Zusammenhang.','Beleg: Ich nenne ein konkretes, passendes Detail.'].map((x,i)=>'<label><input type="checkbox" id="r'+i+'"> '+x+'</label>').join(''):'')+'<button id="go">'+(written?'Einschätzung speichern':'Weiter')+'</button>';$('reply').insertAdjacentHTML('afterbegin',szenenBild(n));$('go').insertAdjacentHTML('beforebegin',rueckblick(n));$('go').onclick=record;$('go').focus()}
 }
 function record(){const {q,written,fact}=current;const rubric=written?[0,1,2].map(i=>$('r'+i).checked):[];const ok=fact!==false&&rubric.every(Boolean);const row={id:q.id,n:q.n,g:goal[q.s],s:q.s,ok,fact,rubric};rows.push(row);history.push(row);save();streak=ok?streak+1:0;miss=ok?0:miss+1;if(streak===3){level=Math.min(2,level+1);streak=0}if(miss===2){level=Math.max(0,level-1);miss=0}if(rows.length===plan.length||rows.length%10===0)report();else show()}
 function report(){const end=rows.length===plan.length,correct=rows.filter(r=>r.ok).length;const weak=rows.filter(r=>!r.ok),rank=[0,1,2,3].filter(g=>stats(rows,g)!==null).sort((a,b)=>stats(rows,a)-stats(rows,b));const revisit=[...new Set([...weak,...rows].map(r=>r.n))].slice(0,5);
@@ -56,7 +85,7 @@ save();$('task').innerHTML='<p>Wähle eine Probeprüfung oder einen Abschnitt au
 function nachlesen(n){
  window.speechSynthesis?.cancel();
  $('chapter').value=n;
- $('task').innerHTML=szenenBild(n)+'<small>'+ref(n)+'</small><h2 tabindex="-1">'+bildFolge[bildIndex(n)][1]+'</h2><p>'+item(n).note+'</p>'+(zusatz[n]?'<p>'+zusatz[n]+'</p>':'')+'<nav aria-label="Abschnitte">'+(n>1?'<button id="vorher">← Zurück</button>':'')+(n<134?'<button id="danach">Weiter zu Abschnitt '+(n+1)+' →</button>':'')+'</nav>';
+ $('task').innerHTML='<small>'+ref(n)+'</small><h2 tabindex="-1">'+bildFolge[bildIndex(n)][1]+'</h2><p>'+item(n).note+'</p><p>'+detailfragen[n-1][1]+'</p>'+(zusatz[n]?'<p>'+zusatz[n]+'</p>':'')+'<nav aria-label="Abschnitte">'+(n>1?'<button id="vorher">← Zurück</button>':'')+(n<134?'<button id="danach">Weiter zu Abschnitt '+(n+1)+' →</button>':'')+'</nav>';
  if(n>1)$('vorher').onclick=()=>nachlesen(n-1);
  if(n<134)$('danach').onclick=()=>nachlesen(n+1);
  $('task').querySelector('h2').focus();

@@ -32,7 +32,7 @@ const zusatz = {
 73:'Für Filler hängt an der Doktorarbeit die erhoffte Anerkennung. Dass der Auftrag den richtigen Gegenstand trifft, wirft für ihn die Frage auf, wer seinen Alltag so genau kennt.',
 86:'Fiona hatte Sylvester bewundert. Aus nächster Nähe merkt sie, wie wenig ihr früheres Wunschbild mit diesem erzwungenen Augenblick zu tun hat.',
 93:'Während Filler den Konflikt gedanklich auf zwei Möglichkeiten verengt, zögert Fiona und greift dann nach den Klausurbögen. Ein Aufgabenblatt fällt zu Boden.',
-100:'Das Kind gibt Mark den entscheidenden Hinweis zum Löschen. Danach drängt es darauf, Alines verletzte Hand zu kühlen.',
+100:'Das Kind gibt Mark den entscheidenden Hinweis zum Löschen. Danach fordert Fiona Aline auf, ihre verletzte Hand zu kühlen.',
 103:'Hugo ist ein Plastikskelett aus Fillers Geschichtsunterricht. Die Klasse durfte es als Steinzeitmenschen ausstatten. Was später zerstört wird, hat sie früher gemeinsam gestaltet.',
 113:'Fiona will Mark von einem Angriff auf Sylvester abhalten. Mark beschreibt, was ihr Blick in ihm auslöst. Ob er ihre Absicht genau verstanden hat, bleibt an dieser Stelle offen.',
 118:'Filler deutet den misslungenen Wurf mit einem Vorurteil über Mädchen. Seine Wertung zeigt seine Sichtweise; das beobachtbare Ereignis ist, dass die Pistole ihr Ziel verfehlt.',
@@ -48,5 +48,5 @@ function szenenBild(n){
 }
 function rueckblick(n){
  const i=bildIndex(n),anfang=i?bildFolge[i-1][0]+1:1;
- return '<details class="rueckblick"><summary>Szene und Vorgeschichte bis Abschnitt '+n+'</summary>'+szenenBild(n)+'<h3>'+bildFolge[i][1]+'</h3>'+kapitel.slice(Math.max(0,anfang-2),n).map(c=>'<p><b>'+c.n+' · '+c.name+'</b><br>'+c.note+(zusatz[c.n]?' '+zusatz[c.n]:'')+'</p>').join('')+'</details>';
+ return '<details class="rueckblick"><summary>Szene und Vorgeschichte bis Abschnitt '+n+'</summary>'+szenenBild(n)+'<h3>'+bildFolge[i][1]+'</h3>'+kapitel.slice(Math.max(0,anfang-2),n).map(c=>'<p><b>'+c.n+' · '+c.name+'</b><br>'+c.note+' '+detailfragen[c.n-1][1]+(zusatz[c.n]?' '+zusatz[c.n]:'')+'</p>').join('')+'</details>';
 }
