@@ -652,12 +652,12 @@ const kapitel = [
  {
   "n": 131,
   "name": "Der Brief",
-  "note": "Im Brief wendet sich die Verfasserin an die Überlebenden und drückt Bedauern aus."
+  "note": "Der Brief beginnt mit einer Anrede an die Lebenden. Am Ende spricht die Verfasserin ihre Eltern direkt an und bittet sie, ihr Bedauern zu verstehen."
  },
  {
   "n": 132,
   "name": "Fiona",
-  "note": "Fiona beschreibt das gemeinsame Schweigen, eine Handberührung und das Aufbrechen der Tür."
+  "note": "Fiona beschreibt das gemeinsame Schweigen, eine Handberührung und das Krachen der Tür."
  },
  {
   "n": 133,
