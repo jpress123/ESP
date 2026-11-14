@@ -22,7 +22,7 @@ const kapitel = [
  {
   "n": 5,
   "name": "Herr Filler",
-  "note": "Filler hofft auf einen scheinbar leeren Raum. Das Klopfen durchkreuzt seinen Plan."
+  "note": "Filler bittet um Ruhe, damit der Raum von aussen leer wirkt. Kaum hat er das erklärt, klopft es."
  },
  {
   "n": 6,
@@ -37,7 +37,7 @@ const kapitel = [
  {
   "n": 8,
   "name": "Mark",
-  "note": "Mark stellt sich seinen letzten Gedanken vor und unterläuft die Erwartung an einen Filmhelden."
+  "note": "Als die Waffe ihn bedroht, vergleicht Mark seine Lage mit einem Horrorfilm. Rückblickend erzählt er, wie wenig heldenhaft sein vermeintlich letzter Gedanke war."
  },
  {
   "n": 9,
@@ -72,7 +72,7 @@ const kapitel = [
  {
   "n": 15,
   "name": "Herr Filler",
-  "note": "Der Gang durch die Reihen erinnert Filler an seine eigene Kontrolle der Hausaufgaben."
+  "note": "Die Schüler senken vor der bewaffneten Person den Blick. Das erinnert Filler daran, wie sie ihm bei seiner Hausaufgabenkontrolle am Vortag ausgewichen sind."
  },
  {
   "n": 16,
@@ -92,7 +92,7 @@ const kapitel = [
  {
   "n": 19,
   "name": "Fiona",
-  "note": "Greta berührt Fionas Arm. Als Fiona spricht, erschrickt sie über den Klang ihrer eigenen Stimme."
+  "note": "Greta legt Fiona eine Hand auf den Arm. Später hört Fiona Geräusche von draussen, springt zum Fenster und ruft um Hilfe. Ihre eigene Stimme klingt für sie heiser und viel zu laut."
  },
  {
   "n": 20,
@@ -147,7 +147,7 @@ const kapitel = [
  {
   "n": 30,
   "name": "Herr Filler",
-  "note": "Neun verschlossene Umschläge belasten Filler. Als ein anderer betroffen ist, empfindet er Erleichterung."
+  "note": "Filler sieht noch neun verschlossene Umschläge. Als er vorliest, dass Tamara und Jan die Kleider tauschen sollen, ist er erleichtert: Diesmal steht er selbst nicht im Mittelpunkt."
  },
  {
   "n": 31,
@@ -187,7 +187,7 @@ const kapitel = [
  {
   "n": 38,
   "name": "Fiona",
-  "note": "Fiona lacht und rechtfertigt ihre Untätigkeit mit ihrer Abneigung gegen Ida-Sophie."
+  "note": "Fiona lacht, als sie den Auftrag über Ida-Sophie hört. Bei Greta, Tamara und Jan empfand sie Mitleid. Bei Ida-Sophie denkt sie, diese habe es verdient."
  },
  {
   "n": 39,
@@ -252,7 +252,7 @@ const kapitel = [
  {
   "n": 51,
   "name": "Mark",
-  "note": "Mark ertappt sich dabei, einzelne Handlungen der bewaffneten Person gutzuheissen."
+  "note": "Mark beschreibt Augenblicke, in denen er die bewaffnete Person trotz der Bedrohung vorübergehend vergisst. Als Lasse die Taschen leert, wartet Mark gespannt darauf, was zum Vorschein kommt."
  },
  {
   "n": 52,
@@ -267,7 +267,7 @@ const kapitel = [
  {
   "n": 54,
   "name": "Mark",
-  "note": "Mark sieht, wie Jill etwas an sich nimmt, bevor andere es erkennen können."
+  "note": "Mark beobachtet, wie Jill ein zerknicktes Foto aus dem Portemonnaie holt und es in der Faust zusammenknüllt, bevor die anderen das Bild sehen können."
  },
  {
   "n": 55,
@@ -367,7 +367,7 @@ const kapitel = [
  {
   "n": 74,
   "name": "Fiona",
-  "note": "Fiona erschrickt darüber, wie banal ihre erste Frage angesichts der Bedrohung klingt."
+  "note": "Fiona fragt sich zuerst, welche Doktorarbeit gemeint ist. Als sie Fillers Gesicht sieht, stellt sie sich die jahrelange Arbeit vor und denkt über die Grenzen nach, die bereits überschritten wurden."
  },
  {
   "n": 75,
@@ -387,7 +387,7 @@ const kapitel = [
  {
   "n": 78,
   "name": "Mark",
-  "note": "Mark zieht sich an seinen Platz zurück und erwägt Rache als Motiv."
+  "note": "Das kleine Mädchen fragt Mark, warum er den Laptop zerstört hat. Sie bringt Rache als Erklärung ins Gespräch. Mark fragt sich weiterhin, wofür sich die bewaffnete Person rächen könnte."
  },
  {
   "n": 79,
@@ -492,7 +492,7 @@ const kapitel = [
  {
   "n": 99,
   "name": "Fiona",
-  "note": "Fiona beobachtet die Suche nach Hilfe und das Erlöschen des Feuers."
+  "note": "Fiona giesst Wasser aus ihrer Trinkflasche auf den brennenden Tisch. Als die Flammen wieder grösser werden, tritt sie gegen die Tischplatte. Erst Marks nasse Jacke erstickt die Glut."
  },
  {
   "n": 100,
@@ -522,7 +522,7 @@ const kapitel = [
  {
   "n": 105,
   "name": "Mark",
-  "note": "Mark stellt seine eigene Beteiligung infrage, als er das Lachen hört."
+  "note": "Mark schlägt auf Hugo ein und empfindet dabei Erleichterung. Als er jemanden lachen hört, fragt er sich, ob das Lachen von der bewaffneten Person oder von ihm selbst kam."
  },
  {
   "n": 106,
@@ -602,7 +602,7 @@ const kapitel = [
  {
   "n": 121,
   "name": "Herr Filler",
-  "note": "Greta unterbricht die drohende Konfrontation mit einer Frage nach dem Sterben."
+  "note": "Greta unterbricht die drohende Konfrontation und fragt nach dem Zweck der Maske. Sie stellt infrage, warum die bewaffnete Person unerkannt bleiben will, wenn sie ohnehin sterben möchte."
  },
  {
   "n": 122,
