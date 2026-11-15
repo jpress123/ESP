@@ -46,7 +46,7 @@ function resume(){
 }
 function share(){
  const url=new URL(location.pathname,location.origin);url.hash='sync='+secret;
- $('paarlink').value=url.href;const qr=qrcode(0,'M');qr.addData(url.href,'Byte');qr.make();$('paarkode').innerHTML=qr.createSvgTag({scalable:true,cellSize:4,margin:16});$('paarung').hidden=false;
+ $('paarlink').value=url.href;$('paarung').hidden=false;
 }
 async function relay(method,body){
  const r=await fetch(endpoint,{method,headers:{Authorization:'Bearer '+keys.auth,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,cache:'no-store',signal:AbortSignal.timeout(15000)});
