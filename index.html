@@ -209,7 +209,6 @@ body{
   50%{filter:drop-shadow(0 0 12px rgba(233,30,120,.4))}
 }
 .featured-card .card-visual svg{animation:pulse-glow 3s ease-in-out infinite}
-.fr-focus{border:2px solid #c4bca7;border-top:6px solid #126357;border-radius:18px;background:#fffaf0;margin:0 auto 36px;padding:clamp(20px,4vw,42px);color:#302b25}.fr-focus h2{font:900 clamp(30px,5vw,52px)/1.08 'Playfair Display',Georgia,serif;margin:8px 0 12px}.fr-date,.fr-next strong{font-weight:700}.fr-focus p{max-width:62ch;line-height:1.55}.fr-focus a{color:#12574c}.fr-focus .fr-start{display:inline-block;background:#12574c;color:white;text-decoration:none;font-weight:bold;padding:13px 20px;border-radius:24px;margin:16px 0}.fr-next{border-top:1px solid #d4c9b1;padding:16px 0;line-height:1.65}.fr-focus summary{cursor:pointer;color:#51483b}.fr-focus details p{margin:8px 0}
 </style>
 </head>
 <body>
@@ -238,14 +237,52 @@ body{
 <!-- FEATURED NEW APPS — Big visual cards   -->
 <!-- ═══════════════════════════════════════ -->
 <div class="subjects">
-  <section class="fr-focus" aria-labelledby="fr-heading">
-    <p class="fr-date">Französisch · Prüfungen im November</p>
-    <h2 id="fr-heading">Heute ins Podcaststudio</h2>
-    <p>Am 20. November ist dein Podcast dran. Wähle heute einen Ort, sammle deine französischen Wörter und erstelle dein erstes Radioskript.</p>
-    <a class="fr-start" href="franz-november.html#podcaststudio">Mein Podcast-Skript starten →</a>
-    <div class="fr-next"><strong>Danach · Schriftliche Prüfung am 26. November</strong><br><a href="franz-november.html#schriftlich">Leçons 1 und 2 üben →</a></div>
-    <details><summary>Frühere Französisch-Lektionen wiederholen</summary><p><a href="french-lecon4.html">Leçon 4 · Grammatik und Aktivitäten</a></p><p><a href="french-vocab-trainer.html">Leçon 5 · Paris und Wortschatz</a></p></details>
-  </section>
+  <div class="featured-grid"><a class="featured-card" href="franzoesisch.html">
+      <div class="card-visual vis-french">
+        
+        <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+          <!-- Eiffel Tower (simplified) -->
+          <polygon points="200,20 170,220 230,220" fill="none" stroke="#c8a96e" stroke-width="3"/>
+          <polygon points="200,20 180,220 220,220" fill="#fef3c7" opacity=".3"/>
+          <line x1="172" y1="140" x2="228" y2="140" stroke="#c8a96e" stroke-width="2"/>
+          <line x1="175" y1="180" x2="225" y2="180" stroke="#c8a96e" stroke-width="2"/>
+          <!-- Arch at middle -->
+          <path d="M182,140 Q200,125 218,140" fill="none" stroke="#c8a96e" stroke-width="2"/>
+          <!-- Base platform -->
+          <rect x="160" y="218" width="80" height="8" rx="2" fill="#c8a96e"/>
+          <!-- French flag colors (subtle background stripes) -->
+          <rect x="0" y="0" width="133" height="260" fill="#dbeafe" opacity=".15"/>
+          <rect x="267" y="0" width="133" height="260" fill="#fce4ec" opacity=".15"/>
+          <!-- Metro sign -->
+          <circle cx="70" cy="80" r="28" fill="#fff" stroke="#c8a96e" stroke-width="2"/>
+          <text x="70" y="75" text-anchor="middle" font-family="'Playfair Display',serif" font-size="10" font-weight="700" fill="#e91e78">METRO</text>
+          <text x="70" y="90" text-anchor="middle" font-size="20">🚇</text>
+          <!-- Vocab cards floating -->
+          <rect x="290" y="40" width="100" height="50" rx="8" fill="#fff" stroke="#f4a7bb" stroke-width="2" transform="rotate(5,340,65)"/>
+          <text x="340" y="60" text-anchor="middle" font-size="10" font-weight="700" fill="#e91e78">je voudrais</text>
+          <text x="340" y="78" text-anchor="middle" font-size="9" fill="#6b7280">ich möchte</text>
+          <rect x="300" y="110" width="90" height="45" rx="8" fill="#fff" stroke="#a8e6cf" stroke-width="2" transform="rotate(-3,345,132)"/>
+          <text x="345" y="130" text-anchor="middle" font-size="10" font-weight="700" fill="#4a3728">magnifique</text>
+          <text x="345" y="145" text-anchor="middle" font-size="9" fill="#6b7280">grossartig</text>
+          <!-- Croissant & beret -->
+          <text x="65" y="180" font-size="32">🥐</text>
+          <text x="310" y="210" font-size="28">🎬</text>
+          <!-- Muscle / repeat icon -->
+          <circle cx="70" cy="230" r="18" fill="#e91e78" opacity=".15"/>
+          <text x="70" y="237" text-anchor="middle" font-size="20">💪</text>
+          <!-- Speech bubble -->
+          <rect x="10" y="120" width="100" height="35" rx="10" fill="#fff" stroke="#a8e6cf" stroke-width="1.5"/>
+          <text x="60" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#4a3728">Ça me plaît!</text>
+          <polygon points="50,155 60,155 45,168" fill="#fff" stroke="#a8e6cf" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="card-content">
+        <div class="fc-subject">Französisch</div>
+        <div class="fc-lesson">Dein Französisch-Lernsalon</div>
+        <div class="fc-desc">Jetzt üben: Reisepodcast für den 20. November. Hier findest du alle Französisch-Module und dein Schulbuch.</div>
+        <div class="fc-btn">Salon öffnen &rarr;</div>
+      </div>
+    </a></div>
   <h2 class="section-title">Weitere Lernstationen</h2>
   <p class="section-sub">Deutsch und Mathematik · Prüfungsvorbereitung</p>
 
